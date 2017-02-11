@@ -1,0 +1,201 @@
+---
+title: "Assignment 1"
+author: "Neha Hajela"
+date: "February 11, 2017"
+output: html_document
+---
+
+# 4. Dataset Preparation
+
+The following table shows the variables used for our analysis:
+
+|Variables        |Type     |Descriptions|
+|-----------------|---------|-------------------------------
+|Type             |Factor   |Public or Private Institution|
+|State            |Factor   |State|
+|Family_Inc       |Numeric  |Average family income in real 2015 dollars|
+|Female           |Numeric  |Percentage of female students|
+|Married          |Numeric  |Percentage of married students|
+|Ind_Per          |Numeric  |Percentage of financially independent students|
+|First_Gen        |Numeric  |Percentage of first generation students|
+|Degree           |Factor   |Predominant degree awarded |
+
+```{r}
+library(dplyr)
+library(magrittr)
+library(stringr)
+library(readr)
+library(ggplot2)
+```
+
+```{r}
+# Read in the csv file using `read_csv` function
+csb.df = read_csv(paste0('/Users/akhoury/Desktop/MA 710/Assignment-1/CollegeScorecard_Raw_Data/', 
+                         'MERGED2014_15_PP.csv'))
+```
+
+```{r}
+# List the variable names from the dataset
+names(csb.df)
+```
+
+```{r}
+# Remove those institutions(rows) which are not currently operating
+csb.df %>%
+  filter(CURROPER ==1) %>%
+  {.} -> csbop.df
+```
+
+```{r}
+# Look for variables to analyse and examine their class
+csbop.df %>%
+  select(CONTROL, ST_FIPS, FAMINC, FEMALE, MARRIED, 
+          DEP_STAT_PCT_IND, FIRST_GEN, PREDDEG ) %>%
+  {.} -> csb.vars.df
+str(csb.vars.df)
+```
+
+```{r}
+# Change the class of certain variables as needed
+csb.vars.df %>% 
+  mutate(FAMINC  = as.numeric(FAMINC),
+         FEMALE = as.numeric(FEMALE), 
+         MARRIED  = as.numeric(MARRIED),
+         DEP_STAT_PCT_IND = as.numeric(DEP_STAT_PCT_IND),
+         FIRST_GEN = as.numeric(FIRST_GEN),
+         CONTROL    = as.factor(CONTROL),
+         ST_FIPS = as.factor(ST_FIPS),
+         PREDDEG = as.factor(PREDDEG)) %>%
+         {.} -> csb.class.df
+```
+
+```{r}
+# Check for the percentage of NA (missing) values for the above range of variables
+csb.class.df %>% 
+  summarise_at(.cols = vars(),
+               .funs = function(x) sum(is.na(x))/length(x))*100
+```
+
+```{r}
+# Select those variables with less than 20% missing values 
+csb.class.df %>%
+  select(CONTROL, ST_FIPS, DISTANCEONLY, FAMINC, FEMALE, MARRIED, 
+         DEP_STAT_PCT_IND, FIRST_GEN, PREDDEG ) %>% 
+         {.} -> csb.var.df
+```
+
+```{r}
+# Combine private for-profit and private non-profit levels in the Type variable. Type = 1 for public,
+# Type = 0 for Private
+csb.var.df %>%
+  mutate(CONTROL = ifelse((CONTROL==2|CONTROL==3),0,1)) %>%
+  mutate(CONTROL    = as.factor(CONTROL)) %>%
+  {.} ->csb.new.df
+```
+
+```{r}
+# Rename the chosen variables
+csb.new.df %>%
+  rename(Type = CONTROL,
+         State = ST_FIPS,
+         Distance = DISTANCEONLY,
+         Family_Inc = FAMINC,
+         Female = FEMALE,
+         Married = MARRIED,
+         Ind_Per = DEP_STAT_PCT_IND,
+         First_Gen = FIRST_GEN,
+         Degree = PREDDEG) %>%
+         {.} -> csb.ren.df
+```
+
+# 5. Variable Summaries
+
+## 5.1 Family Income, Female, Married, Percentage of financially independent student and Percentage of first generation students
+
+The summary statistics for all the numeric variables were obtained using the `summarise_if` function. This function was used in combination with `is.numeric` to summarise only those variables which were numeric. We also grouped these variables by their `Type` which is Public or Private, beofre summarising.The descriptive measures chosen were mean, median and variance. The `options` command was used to set the column width to infinity inorder to see all the columns.The code used was : 
+```{r}
+options(dplyr.width=Inf)
+csb.ren.df %>% 
+  group_by (Type) %>%
+  summarise_if(is.numeric, funs(mean, median, var), na.rm=TRUE)
+print(Rail)
+```
+We can observe how these measures vary considerably for public and private institutions.Though the average family income for both type of institutions is roughly similar, the median family income for Public insitutions ($ 31,000) is ~$3,000 more than that of Private institutions. This is an interesting finding as private institutions being more expensive, should be expected to be attended by students coming from the higher income bracket. It can also be seen that private insitutions have a larger share of female students, married students, financially independent and first-generation students.
+
+## 5.2 Degree and type
+
+The following code is used to summarise the factor variables usig aggregates. We first group the institutions by their type and count the total number of institutions providing predominantly Certficate, Associate, Bachelor and Graduate degrees. The code used is:
+```{r}
+csb.ren.df %>% 
+  group_by(Type) %>%
+  summarise(Certificate=sum(Degree==1),
+            Associate=sum(Degree==2),
+            Bachelor=sum(Degree==3),
+            Graduate=sum(Degree==4))
+```
+The output tells us that there are 2904 institutions providing predominantly Certificate degree, 1298 institutions with Bachelor and 285 Graduate degree institutions.
+
+# 6. Variable relationships
+
+## 6.1 Financially Independent, First Generation and Family Income
+
+In order to visualise the relationship between the three numeric variables, family income, precentage of students who are financially independent and the percentage of first generation students, we use a tile graph. The x-axis represents the Financially independent students in percentage while the y-axis shows the percentage of first generation students. The color of the tile depicts the family income of students, white tiles for the low values and red for the high values of family income. The code used is :
+```{r}
+csb.ren.df %>%
+  ggplot +
+  aes(x=Ind_Per, 
+      y= First_Gen, 
+      z= Family_Inc) +
+  stat_summary2d(fun=mean) +
+  scale_fill_gradient(low="white", 
+                      high="red") 
+```
+It can be observed from the graph that the there is a strong positive correlation between first generation students and financially independent students. This implies that institutes that have a higher share of first generation students also seem to have a higher share of financially independent students. Another observation is that the red tiles are at the lower end of both axes, indicating that institutes with students coming from a background of higher family income tend to have lower percentage of both first generation and financially independent students. 
+
+## 6.2 Family Income, Degree and Type
+
+We now try to analyse the relationsip between family income of students, degree provided by institutons and the type of the insitution.Since it involved one numeric and two factor variables, we use a heat map.The x-axis represents the type, the y-axis denotes the degree and the color of the boxes stands for the average family income of students.The code used is:
+
+```{r}
+csb.ren.df %>%
+  group_by (Type, Degree) %>%
+  summarize(avg.inc=mean(Family_Inc, na.rm = TRUE)) %>%
+  ggplot   (aes(x=Type, y=Degree)) + 
+  geom_tile(aes(fill=avg.inc)) 
+```
+
+This output clearly depics that institutes with students having the highest average famnily income predominantly award Bachelors degree (Degree = 3). This is true for both public and private institutions. On the other hand, institutes that award Certificate degrees have students with the lowest family income. This could partly be explained by the high cost of the 4-year Bachelors program.
+
+## 6.3
+
+The code below is used to count the number of colleges in each state and arrange them from highest to lowest.
+```{r}
+csb.ren.df %>%
+  group_by(State) %>%
+  summarise(Num_of_Public = sum(Type == 1),
+            Num_of_Private = sum(Type == 0)) %>%
+  arrange(desc(Num_of_Public+Num_of_Private)) %>%
+  print (n=3)
+```
+
+From the output it can be seen that States 6,36 and 48 have the highest total number of colleges. These states are California, New York and Texas.For these top 3 states, we now would like to know which are the most popular degrees.
+
+```{r}
+csb.ren.df %>%
+  filter(State %in% c(6,36,48)) %>%
+  ggplot(aes(x=State)) + 
+  geom_bar(aes(fill=Degree), 
+           position='dodge') 
+```
+
+Certificate degrees seem to be the most popular in State 6 and 48 which are California and Texas. It is the second most popular degree after Bachelor's degree in New York. For these most popular certificate degrees, we wish to find the relationship between the type of institution, first generation students % and the family income of students.
+
+```{r}
+csb.ren.df %>%
+  filter(State %in% c(6,48,36) & Degree ==1) %>%
+  ggplot(aes(x=Family_Inc, y=First_Gen)) +
+  geom_point(aes(color=Type, size=3, alpha= 0.2)) + 
+  guides(size=FALSE)
+```
+
+We observe a negative correlation between the family income of students and the percentage of first generation students. This tell sus that for the most popular Certificate degrees in the most poular states California, New York and Texas, first generation students have lower family income. 
