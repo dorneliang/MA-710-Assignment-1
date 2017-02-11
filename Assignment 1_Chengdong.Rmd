@@ -1,0 +1,201 @@
+---
+title: "Assignment 1 Chengdong"
+author: "Chengdong Liang"
+date: "February 11, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r, include=FALSE}
+setwd("C:/Users/Chengdong Liang/Desktop/MA 710/Assignment 1")
+```
+
+## 1 Introduction
+## 2 Goals
+## 3 Dataset Description
+## 4 Objectives
+## 5 Dataset Preparation
+### 5.1 Libraries used
+#### 5.1.1 "dplyr" package
+We will load the *'dplyr'* package that contains functions for data manipulation using data frames. It allows us to order rows, select rows, select variables, modify variables and summarize variables. 
+```{r}
+library(dplyr)
+```
+
+#### 5.1.2 "ggplot2" package
+We will load the *"ggplot2"* package which is a powerful plotting system that creates elegant and complex plots in R.
+```{r}
+library(ggplot2)
+```
+#### 5.1.3 "ggvis" package
+We will also use the graphics commands from the ggvis library.
+```{r}
+library(ggvis)
+```
+#### 5.1.4 "magrittr" package
+The magrittr library is loaded for the piping operator %>%.
+```{r}
+library(magrittr)
+```
+
+```{r}
+library(readr)
+csb.df = read_csv(paste0('C:/Users/Chengdong Liang/Desktop/MA 710/Assignment 1/CollegeScorecard_Raw_Data/', 'MERGED2014_15_PP.csv'))
+```
+```{r}
+csb.df %>%
+  select(CONTROL, CDR3, CDR3_DENOM, PCTPELL, PCTFLOAN, DEBT_N, CUML_DEBT_N) %>%
+  {.} -> csb.vars.df
+```
+### 5.2 Varible Modification
+#### 5.2.1 Select Variables
+Firstly we take a look at varibles that we are interested:
+
+Varible |Type |Description
+--------|-----|-----------
+CONTROL |Factor|Control of institution
+CDR3|Numeric|Three-year cohort default rate
+CDR3_DENOM|Numeric|Number of students in the cohort for the three-year cohort default rate
+PCTPELL|Numeric|Percentage of undergraduates who receive a Pell Grant
+PCTFLOAN|Numeric|Percent of all federal undergraduate students receiving a federal student loan
+DEBT_N|Numeric|The number of students in the median debt completers cohort
+CUML_DEBT_N|Numeric|Number of students in the cumulative loan debt cohort
+
+#### 5.2.2 Convert class of variables 
+Then we need to datatype of all selected variables class and conver them into proper way:
+```{r}
+str(csb.vars.df)
+```
+```{r}
+csb.vars.df %>% 
+  mutate(CONTROL  = as.factor(CONTROL),
+         CDR3 = as.numeric(CDR3), 
+         CDR3_DENOM  = as.numeric(CDR3_DENOM),
+         PCTPELL = as.numeric(PCTPELL),
+         PCTFLOAN = as.numeric(PCTFLOAN),
+         DEBT_N = as.numeric(DEBT_N),
+         CUML_DEBT_N = as.numeric(CUML_DEBT_N)
+         )%>%
+         {.} -> csb.vars.df
+```
+For the target varible "CONTROL", we need to convert it into a factor varible with two levels: Level=1 stands for public; Level= 0 stands for Private
+```{r}
+csb.vars.df %>%
+  mutate(CONTROL = ifelse((CONTROL==2|CONTROL==3),0,1)) %>%
+  mutate(CONTROL = as.factor(CONTROL)) %>%
+  {.} ->csb.vars.df
+```
+#### 5.2.3 Check missing values
+We need to check for the percentage of missing values of all selected varibles:
+```{r}
+csb.vars.df %>% 
+  summarise_at(.cols = vars(),
+               .funs = function(x) sum(is.na(x))/length(x))*100
+```
+
+*CDR3 and CDR3_DENOM have the highest percentage of missing value: 13.74789%
+
+*CONTROL has no NA value
+
+*All variables are clean enough in terms of missing value. There is no need to deal with missing values.
+
+## 6 Variable Summaries
+To get a better understanding of our variables, we could adopt descriptive analysis to summary independent varibles. Furthermore, we could generate summary statistics respectively for two different categories of our target varivble- CONTROL:
+```{r}
+options(dplyr.width=Inf)
+csb.vars.df %>% 
+  group_by (CONTROL) %>%
+  summarise_if(is.numeric, funs(mean, median, var), na.rm=TRUE)
+```
+
+From the output, we could summarise that in terms of mean value:
+
+
+for variables *PCTPELL*, *PCTFLOAN*, *DEBT_N*, *CUML_DEBT_N*, public institutions(CONTROL=1) are much higher than Private insitituions.
+
+for variables *CDR3*, *CDR3_DENOM*, public institutions(CONTROL=1) are much lower than Private insitituions.
+
+
+In terms of median value:
+
+for variables *PCTPELL*, *PCTFLOAN*, *CUML_DEBT_N*, public institutions(CONTROL=1) are higher than Private insitituions.
+
+for variables *DEBT_N*, *CDR3*, *CDR3_DENOM*, public institutions(CONTROL=1) are lower than Private insitituions.
+
+
+In terms of variance:
+
+for variables *PCTPELL*, , *CUML_DEBT_N*, *DEBT_N*, *CDR3*, *CDR3_DENOM*, public institutions(CONTROL=1) are higher than Private insitituions.
+
+for variable *PCTFLOAN* public institutions(CONTROL=1) are slightly lower than Private insitituions.
+
+In conclusion, the summary statistics reveals that considerably differnece exists between two catories of target varible. 
+
+## 7 Variable relationships
+### 7.1 Target variable 'CONTROL'
+We use a bar plot to compare numbers of observations for the target variable *CONTROL*
+```{r}
+csb.vars.df %>%
+  ggplot  (aes(x   =CONTROL)) +
+  geom_bar(aes(fill=CONTROL))
+```
+
+From the plot above we can find that there are appriximately 2,000 Public insitituions. The number of Private colleges is nearly 5700.
+
+### 7.2 Target variable ~ independent variables
+We use box plot to compare distributions of each independent variable between two levels of target variable.
+### 7.2.1 "CONTROL"~"CDR3"
+```{r}
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=CDR3)) + 
+  geom_boxplot(aes(fill=CONTROL)) +
+    ylim(0, 0.6)
+```
+
+### 7.2.2 "CONTROL"~"CDR3_DENOM"
+```{r}
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=CDR3_DENOM)) + 
+  geom_boxplot(aes(fill=CONTROL)) +
+  ylim(0, 10000)
+```
+
+### 7.2.3 "CONTROL"~"PCTPELL"
+```{r}
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=PCTPELL)) + 
+  geom_boxplot(aes(fill=CONTROL))
+```
+
+### 7.2.4 "CONTROL"~"PCTFLOAN"
+```{r}
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=PCTFLOAN)) + 
+  geom_boxplot(aes(fill=CONTROL))
+```
+
+### 7.2.5 "CONTROL"~"DEBT_N"
+```{r}
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=DEBT_N)) + 
+  geom_boxplot(aes(fill=CONTROL)) +
+  ylim(0, 30000)
+```
+
+### 7.2.6 "CONTROL"~"CUML_DEBT_N"
+```{r}
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=CUML_DEBT_N)) + 
+  geom_boxplot(aes(fill=CONTROL)) +
+  ylim(0, 10000)
+```
+
+From all the box-plot above, we could conclude that the distribution of each variable are quite different for two levels of the target varible. We could draw the conclusion and achieve our initial goal based on our analysis output.
