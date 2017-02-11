@@ -1,0 +1,318 @@
+---
+title: "Assignment 1 - MA710 Bentley"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+The data we are working on is provided by the U.S department of Education. Teh dataset contains information from the College Scorecard as well as other data on federal financial aid and earnings information. The data provides information on which are eligible for federal financial aid and give insights in the to school performance as well as the students outcomes.
+
+The goal of the data is to increase the transperancy related to how differnet colleges serves the students population. The dataset contains 1743 variables which are organized into 10 categories. The categories cover a range of topics:
+
+*Root - basic information such as School Id and location
+*School - basic descriptive information such as degree types, number of branches, Carnegie classification, Public vs Private etc
+*Academics - type of academics available at the school
+*Admissions - admission statistics such as acceptance rate and SAT/ACT scores
+*Student - description of the student body inclusing the number of undergraduate students, part-time vs full-time, share of first generation students
+*Cost - information on cost such as average cost of attendance, tuiton, fees, avergae net price by income level
+*Aid - how much debt a student take on while attending the college, typical monthly loan payments, percentage of Pell Grant Recipients
+*Repayment - description of how successful are students at reapying their debts measured by cohort default rate and repayment rate
+*Completion - information on the compeletion and retention rates for first time and full time students
+*Earnings - statistics on average and median earnings as well as share of former students earning more than 25,000
+
+
+
+##Goals
+
+
+
+
+##DataSet Description
+
+The subset of Variables we plan to use is:
+
+*HIGHDEG - highest degree awarded (a factor variable with 5 levels 0-non degree awarded; 4 - graduate degree)
+*REGION - the region where the college is located (a factor variable with 10 leves describing a number of regions such as New England, Mid East, Great Lakes etc)
+*NPT4_PRIV - average annual cost of attendance a Private college inclusing tuiton, supplies, living expenses minus the average grand or scholarship; the cost is calculated for full-time, fist-time, degree and certificate seeking undergraduates
+*NPT4_PUB - average annual cost of attendance a Private college inclusing tuiton, supplies, living expenses minus the average grand or scholarship; the cost is calculated for full-time, fist-time, degree and certificate seeking undergraduates
+*NUMBRANCH - Number of Branch Campuses
+*CCBASIC - Carnegie Classification which describes the colleges as either Associate's collegeSpecial focus, Baccalaureatte/Associate, Doctoral University, Tribal college
+*CONTROL - describes the college as Private (for profit), Private(non profit), Public
+
+
+
+
+##Objectives
+
+
+
+
+
+##Variable Summaries
+
+
+For this project, we will use the readr, dplrt and ggplot2 packages. The readr package is used to read the data from the csv file, the dyplr package is for sumamrizing, selecting and mutating the dataset and the ggplot2 package is used for data visualization purposes.
+
+First we read the data into a dataframe variable
+
+```{r merged2014, cashe = TRUE, echo= FALSE, warning=FALSE, message = FALSE}
+
+library(readr)
+library(dplyr)
+library(ggplot2)
+
+merged2014.df = data.frame()
+merged2014.df = data.frame(read_csv(paste0('C:/Users/sevda/Documents/Bentley/710/Assignment 1/CollegeScorecard_Raw_Data/CollegeScorecard_Raw_Data/', 
+                          'MERGED2014_15_PP.csv')))
+```
+
+
+Base on our decision to select certain variables, we will use the SELECT command to create a smaller data frame which contains only the variables of interest.
+
+```{r, cache=TRUE}
+
+merged2014.df %>%
+  select(OPEID, HIGHDEG, REGION, NPT4_PRIV, NPT4_PUB, NUMBRANCH, CCBASIC, CONTROL) %>%
+  {.} -> merged2014.vars.df
+str(merged2014.vars.df)
+
+```
+
+From the R output, we can see that part of the variables are not in the correct format.NTP4_PRIV (Average net price for attending a private college) and NTP4_PUB (Average net price for attending a public college) are vector of characters. However the actual values should be integers because the two variables represent either scores or the amount of tuition. For that reason we will perform mutation of the variables from character to numerics.
+
+
+```{r, cache=TRUE}
+# Change the class of certain variables as needed
+merged2014.vars.df %>% 
+  mutate(OPEID = as.numeric(OPEID),
+         NPT4_PRIV = as.numeric(NPT4_PRIV), 
+         NPT4_PUB  = as.numeric(NPT4_PUB)) %>%
+  {.} -> merged2014.vars.df
+```
+
+Since NTP4_PRIV and NTP4_PUB describes the average net price of either Public or Private colleges, they are complementing each other. For that reason, we will built a new variable(NPT4) which describes the average net price for both public and private colleges. The way we will build the new variable is by combining the information in both initial variables.
+
+```{r, cache=TRUE}
+
+#(replace na values with 0)
+  replace_na_values <- function (variable){
+    for (i in 1:length(variable)){
+      if (is.na(variable[i])){
+        variable[i] = 0
+      }
+    }
+    return (variable)
+  }
+#replace all the na values and creating a new variable which holds all the tuition expenses
+merged2014.vars.df %>% 
+  mutate(NPT4 = replace_na_values(NPT4_PRIV) + replace_na_values(NPT4_PUB)) %>%
+  {.} -> merged2014.vars.df
+```
+
+Since the objective of the project is to compare Public vs Private colleges, we need to create a new variable which will desceibe the college as either Public(1) or Private(0). The variable will be created from the original variable CONTROL which has three factor levels and describes the colleges as Private for profit, Private not for profit and Public.
+
+```{r, cache=TRUE}
+
+#Adding a varable which indicates whether it is public vs private
+merged2014.vars.df %>% 
+  mutate(PUBLIC = as.integer((CONTROL == 1))) %>%
+  {.} -> merged2014.vars.df
+```
+
+After the dataset variables are mutated and new ones are cerated, we are ready for the next step which is summarizing the variables.All the summarizing is performed  by first grouping the colleges by Public vs Private.
+
+```{r, cache=TRUE}
+ 
+ summarize(group_by(merged2014.vars.df, PUBLIC), 
+          mean_tuiton=mean(NPT4,na.rm=TRUE),
+          sd_tuiton = sd(NPT4, na.rm=TRUE),
+          median_tuiton=median(NPT4,na.rm=TRUE),
+          max_branches=max(NUMBRANCH,na.rm=TRUE),
+          mmedian_branches = median(NUMBRANCH, na.rm=TRUE),
+          mean_branches=mean(NUMBRANCH,na.rm=TRUE),
+          max_highdeg=max(HIGHDEG,na.rm=TRUE),
+          median_highdeg = median(HIGHDEG, na.rm=TRUE),
+          mean_highdeg=mean(HIGHDEG,na.rm=TRUE))
+
+# CODE for checking the missing value for all the variables..... Check for the number of NA (missing) values
+# for individual variables:
+merged2014.vars.df %>%
+  summarize( 
+    HIGHDEG.cnt.na = sum(is.na(HIGHDEG)),
+    REGION.cnt.na = sum(is.na(REGION)),
+    NPT4.cnt.na = sum(is.na(NPT4)),
+    NUMBRANCH.cnt.na = sum(is.na(NUMBRANCH)),
+    CCBASIC.cnt.na = sum(is.na(CCBASIC))
+  )
+
+```
+We can see that the selected variables are mostly without missing values. The exception is CCBASIC which has 421 missing values or the equivalent of 5.46% from the data. Since this is an important variable for us and considering the fact approximately 5% are msising values, we will use the CCBASIC variabe for our analysis.
+
+
+We will use some graphs in order to explore further the variables and the relationship between them. Since we are considering the variables through the Public vs Private category, when exploring the variables we will use different colors to emphasize the differences which come with Private vs Public colleges.
+
+```{r, cache=TRUE}
+
+#Total number pf Public vs Private colleges = there are at least twice as more Private colleges compared to Public
+merged2014.vars.df %>%
+  ggplot  (aes(x   = as.factor(PUBLIC))) +
+  geom_bar(aes(fill=PUBLIC)) 
+```
+
+From the graph above we can see that there are appriximately 2,000 Public colleges in the data set we are exploring. The number of Private colleges is more than twice the number of Public colleges.That means that we will have more data available for Private colleges and we will be able to draw more conclusion for them based on the dataset.
+
+
+The Region variable gives information which region a college belongs to. The graph below shows the distribution of colleges by region.
+
+```{r, cache=TRUE}
+#College count by Region colored by Public vs Private
+merged2014.vars.df %>%
+  ggplot(aes(x=as.factor(REGION))) +
+  geom_bar(aes(fill= as.factor(PUBLIC)))
+```
+
+Based on the graph, we can see that the colleges are not equally distributed among regions. Some regions such as numbers 2(Mid East),3(Great Lakes) and 5(Southeast) have much  larger amount of colleges compared to 7(Rocky Mountains) and 9(Outlying areas). In addition the ratio of the Public vs Private colleges changes between regions.
+
+The variable CCBASIC describes the Carnegie classification of colleges. There are 33 different type of colleges ranging between Associate's college and Doctoral Universities. We will explore the distribution of colleges based on the CCBASIC values.
+
+```{r, cache=TRUE}
+
+#College count by CCBASIC colored by Public vs Private
+#
+merged2014.vars.df %>%
+  ggplot(aes(x=as.factor(CCBASIC))) +
+  geom_bar(aes(fill= as.factor(PUBLIC)),
+            position='dodge')
+
+```
+From the plot, we can see that some categories are stronger represented. A significant amount fo the values belong to category (-2) which means that the classification is not applicable. In addition we can see that Public colleges are represented better in some categories(1,2,3,4,5) while private colleges are strongly represented in other categories such as 21,22,23. In order to be able to explore the graph in more details, we will remove the nor classified colleges and will split the rest of the data in two parts - csategories which are strognly represented by Public colleges and these which are strongly represented by Private colleges.
+
+
+```{r, cache=TRUE}
+merged2014.vars.df %>% 
+  filter(CCBASIC %in% c(1:9, 14:18)) %>%
+  {.} -> merged2014.vars.pub.ccbasic.df
+
+merged2014.vars.df %>% 
+  filter(CCBASIC %in% c(10:13, 19:33)) %>%
+  {.} -> merged2014.vars.priv.ccbasic.df
+
+merged2014.vars.pub.ccbasic.df %>%
+  ggplot(aes(x=as.factor(CCBASIC))) +
+  geom_bar(aes(fill= as.factor(PUBLIC)),
+            position='dodge')
+
+merged2014.vars.priv.ccbasic.df %>%
+  ggplot(aes(x=as.factor(CCBASIC))) +
+  geom_bar(aes(fill= as.factor(PUBLIC)),
+            position='dodge')
+
+```
+
+From the new plots, we can see that 9 (Associate's Colleges: High Vocational & Technical-High Nontraditional) and  14(Baccalaureate/Associate's Colleges: Associate's Dominant) are with almost equal numbers of Public and Private colleges. The rest of the categories are strognly dominated by one type or another. It's interesting to see that most Associates' colleges are mostly Public with very few Private options. On the other hand the Special focus Two-Years and the Baccalaureatte colleges are mostly Private ones.
+
+The next variable to explore is the Number of Branches. Again we will see the distribution colored based on the Public vs Private options.
+
+```{r}
+#College count by NUMBRANCH colored by Public vs Private
+#
+merged2014.vars.df %>%
+  ggplot(aes(x=as.factor(NUMBRANCH))) +
+  geom_bar(aes(fill= as.factor(PUBLIC)),
+            position='dodge')
+```
+
+From the graph, it is visible that the Private colleges are the ones that offer more branches. The Public colleges rarely has more than 6 branches. The majority of the colleges are with only one branch.
+
+The next variable in our exploratory analysis is the HIGHDEG. It describes the highest degree awarded at the college. 
+
+```{r, cache=TRUE}
+merged2014.vars.df %>%
+  ggplot(aes(x=as.factor(HIGHDEG))) +
+  geom_bar(aes(fill= as.factor(PUBLIC)),
+            position='dodge')
+```
+
+From the graph we can see that categories 0 (no degree), 1(Certificate) and 3(Bachelors) are very strognly represented by Private colleges. The Public colleges are stronger is giving Associate degrees and Gradyate degrees.
+
+The last variable to explore is the Tuiton(NPT4).
+
+
+```{r, cache=TRUE}
+#College count by NPT colored by Public vs Private
+merged2014.vars.df %>%
+  ggplot(aes(x=as.factor(PUBLIC),
+             y=NPT4)) + 
+  geom_boxplot(aes(fill=PUBLIC)) 
+```
+
+
+Based on the box plots, we can see that the Private colleges(on the left) are more expensive compared to Public with some very expensive private colleges presented as outliers on the plot. The median of the tuiton for Public colleges is also lower than the median of the tuiton for Private colleges. The cheaper Private colleges are with comparable tuiton to the most expensive Public colleges.
+
+
+
+##Variable relationship
+
+The next step is to explore some variable relationships.
+
+The first relationship to focus on is whether the is a strong relationship between the tuiton and the number of branches.
+
+```{r}
+#NPT4 by Number of branches
+ggplot(data=merged2014.vars.df) + 
+  aes(x=NPT4,
+      y=NUMBRANCH) + 
+  geom_point(size=1,
+             alpha=0.2)
+
+```
+
+Based on the plot, we can see that there is no clear correlation. The majority of the points are at the bottom of the graph which is explained by the fact that most of the colleges has 1 branch only. We can see that some colleges with very high number of branches, which stands out on the top of the graph, are with medium tuiton in the range of 20,000 - 25,000. And the most expensive colleges has 1 branch only. Therefore we can not find a clear correlation between tuiton and number of branches.
+
+The next relationship, we are interested in is to see how the tuiton relates to region. The question we are exploring is whether some regions are more expensive than other.
+
+```{r}
+#NPT by REGION and by Public
+merged2014.vars.df %>%
+  ggplot(aes(x=as.factor(REGION), y=NPT4)) +
+  geom_boxplot(aes(fill=as.factor(PUBLIC)))
+
+```
+
+The graph represents the tuiton by region and by Public vs Private colleges. We can see that the tuiton for the Public colleges is in general lower for each of the 9th regions. We can also observe that most of the regions are with comparable tuition when we compare the Private colleges and the Public colleges separately. Region 1(New England) stands out as the most expensive region when it comes to both Public and Private. While region 9 (Outlying areas) stands out as the cheapest area for education. Region 5(Southeast) has some very expensive colleges which stands out as outliers.
+
+The next comparison is between the Classification and the Tuiton. We are exploring whether the tuiton varies by the type of college.
+
+```{r}
+#NPT by CCASIC and by Public
+merged2014.vars.df %>%
+  ggplot(aes(x=CCBASIC, y=NPT4)) +
+  geom_point(aes(color=PUBLIC))
+
+```
+
+As we already discovered in previous graphs, certain type of colleges such as Associates are more strongly represented by Public colleges. As a result their tuiton is lower than the tuiton of other categories which are strongly represented by Private colleges such as Special focus Two Year colleges.
+
+It is also interesting to explore whether some regions tend to have colleges with more branches and how that is affected by Public vs Private classification.
+
+
+```{r}
+#NUMBRANCH by REGION and by Public
+merged2014.vars.df %>%
+  ggplot(aes(x=as.factor(REGION), y=NUMBRANCH)) +
+  geom_point(aes(color=PUBLIC))
+
+```
+
+From the graph, we can see that the number of branches are approximately equally distributed between the regions. Region 1(New England) and Region 9 (Outlying areas) have colleges which are in general with slightly less number of branches. That could be explained by the geographical size of the resions. If the region is larger then it would make sense for the college to expand the number of branches in order to cover larger students' population.
+
+
+##Conclusion
+
+
+
+
