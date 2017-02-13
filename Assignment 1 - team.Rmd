@@ -8,21 +8,31 @@ output: html_document
 The data we are working on is provided by the U.S department of Education. The dataset contains information of College Scorecard, federal financial aid and students'earning records. The data set can help to understand the information of getting federal financial ai and have insights on the school performance as well as students' long term development.The dataset contains 1743 variables which are organized into 10 categories. The categories cover a range of topics:
 
 *Root - basic information such as School Id and location.
+
 *School - basic descriptive information such as degree types, number of branches, Carnegie classification, Public or Private etc.
+
 *Academics - types of academics available at the school.
+
 *Admissions - admission statistics such as acceptance rate and SAT/ACT scores.
+
 *Student - descriptions of the students including the number of undergraduate students, part-time or full-time students, share of first generation students.
+
 *Cost - information  cost for students such as average cost of attendance, tuiton and fees, and avergae net price for institutions by income level.
-*Aid - the amount of debt a student can take on while attending the college, typical monthly loan payments, and the percentage of Pell Grant Recipients
+
+*Aid - the amount of debt a student can take on while attending the college, typical monthly loan payments, and the percentage of Pell Grant Recipients.
+
 *Repayment - descriptions of how successful students are at reapying their debts which is measured by cohort default rate and repayment rate.
-*Completion - information on the compeletion and retention rates for first time and full time students
+
+*Completion - information on the compeletion and retention rates for first time and full time students.
+
 *Earnings - statistics on average and median earnings as well as share of former students' earning more than $25,000. 
+
 
 Based on the information provided by the dataset,the descriptive analysis is performed. 
 
 
 ##Goals
-"private colleges vs. public colleges"- there is a face-off that's been ongoing for many years. The major difference between public and private colleges lies in how they are funed. Public colleges are funded mostly by state governments, whereas private colleges rely heavily on private contributions, donations and tuition. The goal of our analysis is to compare public institutions and private colleges in terms of their **performance**.  A college degree or postsecondary certificate is more important than ever. However, many students are not confident enough to making decision on the type of school they should choose. Our analysis aims at helping students understand the differences between public institutions and private colleges in terms of school size, school performance, tuition cost, degrees awarded, students' background and geographic information. The analysis should give potential students a brief overview of these two types of schools. 
+"Private colleges vs. public colleges", there is a face-off that's been ongoing for many years. The major difference between public and private colleges lies in how they are funed. Public colleges are funded mostly by state governments, whereas private colleges rely heavily on private contributions, donations and tuition. The goal of our analysis is to compare public institutions and private colleges in terms of their "performance".  A college degree or postsecondary certificate is more important than ever. However, many students are not confident enough to making decision on the type of school they should choose. Our analysis aims at helping students understand the differences between public institutions and private colleges in terms of school size, school performance, tuition cost, degrees awarded, students' background and geographic information. The analysis should give potential students a brief overview of these two types of schools. 
 
 
 ##DataSet Description
