@@ -1,0 +1,128 @@
+---
+title: "MA710 Assignment 1"
+author: "Katie Zheng"
+date: "February 12, 2017"
+output: html_document
+---
+#Description of variables:
+#Variables	Type	Descriptions
+#CONTROL	Integer	Control of institution
+#PCIP01	Character	"% degrees awarded in Agriculture , Agriculture Operations, And Related Sciences.
+#PCIP03	Character	% degrees awarded in Natural Resources And Conservation.
+#PCIP04	Character	% degrees awarded in Architecture And Related Services.
+#PCIP05	Character	% degrees awarded in Area, Ethnic, Cultural, Gender, And Group Studies.
+#PCIP09	Character	% degrees awarded in Communication, Journalism, And Related Programs.
+#PCIP10	Character	% degrees awarded in Communications Technologies/Technicians And Support Services.
+
+library(dplyr)
+library(magrittr)
+library(stringr)
+library(readr)
+library(ggplot2)
+
+#read csv file using read_csv unction 
+csb.df=read_csv(paste0('/Users/student/Desktop/MA710/Tuesday version/Assignment 1/',
+                         'MERGED2014_15_PP.csv'))
+#list the variables from dataset. 
+names(csb.df)
+
+###Variable Preparation:
+
+#select variables from the dataset:
+csb.df %>%
+  select(CONTROL,PCIP01,PCIP03,PCIP04,PCIP05,PCIP09,PCIP10) %>%
+  {.}-> csb.vars.df
+
+str(csb.vars.df)
+
+csb.vars.df
+
+#convert the type of variables into proper type
+csb.vars.df %>% 
+  mutate(PCIP01=as.numeric(PCIP01),
+         PCIP03=as.numeric(PCIP03),
+         PCIP04=as.numeric(PCIP04),
+         PCIP05=as.numeric(PCIP05),
+         PCIP09=as.numeric(PCIP09),
+         PCIP10=as.numeric(PCIP10)
+         )%>%
+  {.} -> csb.vars.df
+
+#convert target variable "CONTROL" into two levels, 1 stands for public and 0 stands for Private
+csb.vars.df %>%
+  mutate(CONTROL = ifelse((CONTROL==2|CONTROL==3),0,1)) %>%
+  mutate(CONTROL = as.factor(CONTROL)) %>%
+  {.} ->csb.vars.df
+
+#checking percentage of missing values of all selected varibales:
+csb.vars.df %>% 
+  summarise_at(.cols = vars(),
+               .funs = function(x) sum(is.na(x))/length(x))*100
+  #The result idicates that the missing value of 
+  #the percentage of degree awarded in those 6 areas is less than 10%
+
+
+###Variable Summaries:
+options(dplyr.width=Inf)
+csb.vars.df %>% 
+  group_by (CONTROL) %>%
+  summarise_if(is.numeric, funs(mean, median, var), na.rm=TRUE)
+#The result indicated that the averages of the percentage of awarded degree in those 6 fields are less than 1% .Among those 6 awarded degree, the mean of the PCIP09 is the largest regardless of the contorl type.This result indicates that among those 6 variables, percentages of degrees awarded in Communication are awarded more than otehr degree.The variance of those 6 variables are relatively samll, which means that from 2014 to 2015,the percentage of those 6 awarded degrees are almost the same in general. It does not vary to much in different institutes.PCIP01,PCIP03,PCIP05,PCIP09 degrees are awared more in public school than privated school. 
+
+
+###Variable relationships:
+##Target variables~independent variables:
+#Control~PCIP01:
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=PCIP01)) + 
+  geom_boxplot(aes(fill=CONTROL)) +
+  ylim(0, 0.6)
+#The result indicates that the major percentage of taking argriculture degree is less than 0.1 percent in private school and less than 0.2 percent in public school. There are more outlier in private school. 
+
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=PCIP03)) + 
+  geom_boxplot(aes(fill=CONTROL)) +
+  ylim(0, 0.7)
+#The result indicates that the majority percentage of taking natural resource degree is less than 0.15 percent in public school and less than 0.1 percent in private school.There are more outliers in private school than in public school.In some private school, the natural degree is awarded more than other private school and public school.
+
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=PCIP04)) + 
+  geom_boxplot(aes(fill=CONTROL)) +
+  ylim(0, 0.5)
+#The result indicates that the majority percentage of taking Architecture degree is less than 0.07 percent in private and public school. Private school has higher Architecture degree pecentage than public school.There are more outliers in private school.
+
+csb.vars.df %>%
+ggplot(aes(x=CONTROL,
+           y=PCIP05)) + 
+  geom_boxplot(aes(fill=CONTROL)) +
+  ylim(0, 0.5)
+#The result indicates that the majority percentage of Ethnic degree in private school is less than 0.1 percent while it is less than 0.05 in public school. There more higher percentage of Ethnic dergree awarded in public school because public school has more outliers.
+
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=PCIP09)) + 
+  geom_boxplot(aes(fill=CONTROL)) +
+  ylim(0, 0.6)
+#The result indicates that majority of percentage of communication/juornal degree awarded is less than 0.025 in public school.Private school has more high percentage communication degress awarded and has more outliers.
+
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=PCIP10)) + 
+  geom_boxplot(aes(fill=CONTROL)) +
+  ylim(0, 0.5)
+#The result indicates that the range of percentage of communication technology degree awarded in private school is larger than public school. Private school has higher percentage of communication technology degree awarded.The percentage of communication techonology degree awarded is more spread in private school than in public school. 
+
+
+#Among variables
+cor_matrix<-csb.vars.df %>%
+  group_by(CONTROL)%>%
+  do(as.data.frame(cor(.[,-1],method="spearman",use="pairwise.complete.obs")))
+cor_matrix1<- cor_matrix%>%
+  data.frame(row=rep(colnames(.)[-1],n_groups(.)))
+cor_matrix1
+#Among private school, PCIP03 and PCIP05 has some correlation, around 0.53.Among public school, PCIP05 and PCIP09 has some correlation around 0.46. 
+  
+
