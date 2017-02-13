@@ -134,7 +134,7 @@ csb.vars.df %>%
 The result indicates that the range of percentage of communication technology degree awarded in private school is larger than public school. Private school has higher percentage of communication technology degree awarded.The percentage of communication techonology degree awarded is more spread in private school than in public school. 
 
 
-Among variables
+#Among variables
 ```{r}
 cor_matrix<-csb.vars.df %>%
   group_by(CONTROL)%>%
