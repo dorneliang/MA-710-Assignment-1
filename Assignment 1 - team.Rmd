@@ -3,67 +3,84 @@ title: "Assignment 1 - MA710 Bentley"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 ## Introduction
 
-The data we are working on is provided by the U.S department of Education. Teh dataset contains information from the College Scorecard as well as other data on federal financial aid and earnings information. The data provides information on which are eligible for federal financial aid and give insights in the to school performance as well as the students outcomes.
+The data we are working on is provided by the U.S department of Education. The dataset contains information of College Scorecard, federal financial aid and students'earning records. The data set can help to understand the information of getting federal financial ai and have insights on the school performance as well as students' long term development.The dataset contains 1743 variables which are organized into 10 categories. The categories cover a range of topics:
 
-The goal of the data is to increase the transperancy related to how differnet colleges serves the students population. The dataset contains 1743 variables which are organized into 10 categories. The categories cover a range of topics:
-
-*Root - basic information such as School Id and location
-*School - basic descriptive information such as degree types, number of branches, Carnegie classification, Public vs Private etc
-*Academics - type of academics available at the school
-*Admissions - admission statistics such as acceptance rate and SAT/ACT scores
-*Student - description of the student body inclusing the number of undergraduate students, part-time vs full-time, share of first generation students
-*Cost - information on cost such as average cost of attendance, tuiton, fees, avergae net price by income level
-*Aid - how much debt a student take on while attending the college, typical monthly loan payments, percentage of Pell Grant Recipients
-*Repayment - description of how successful are students at reapying their debts measured by cohort default rate and repayment rate
+*Root - basic information such as School Id and location.
+*School - basic descriptive information such as degree types, number of branches, Carnegie classification, Public or Private etc.
+*Academics - types of academics available at the school.
+*Admissions - admission statistics such as acceptance rate and SAT/ACT scores.
+*Student - descriptions of the students including the number of undergraduate students, part-time or full-time students, share of first generation students.
+*Cost - information  cost for students such as average cost of attendance, tuiton and fees, and avergae net price for institutions by income level.
+*Aid - the amount of debt a student can take on while attending the college, typical monthly loan payments, and the percentage of Pell Grant Recipients
+*Repayment - descriptions of how successful students are at reapying their debts which is measured by cohort default rate and repayment rate.
 *Completion - information on the compeletion and retention rates for first time and full time students
-*Earnings - statistics on average and median earnings as well as share of former students earning more than 25,000
+*Earnings - statistics on average and median earnings as well as share of former students' earning more than $25,000. 
 
-
+Based on the information provided by the dataset,the descriptive analysis is performed. 
 
 
 ##Goals
-The goal of our analysis is to compare of public institution and private colleges in terms of their **performance**.  A college degree or postsecondary certificate is more important than ever. However, many students feel unprepared for the choices of "Public" or "Private" they need to make. Do public colleges serve their students better? Or the answer is "Private"?
-
-"private colleges vs. public colleges"- there is a face-off that's been ongoing for many years. The major difference between public and private colleges lies in how they are funed. Public colleges are funded mostly by state governments, whereas private colleges rely heavily on private contributions, donations and tuition. there are more differences between private and public colleges: size, class size, demographics and etc.
-
-There are many different metrics in terms of evaluting performance of colleges from different perspectives. Our analysis mainly focus on the difference between public and private colleges in serving students. 
-
+"private colleges vs. public colleges"- there is a face-off that's been ongoing for many years. The major difference between public and private colleges lies in how they are funed. Public colleges are funded mostly by state governments, whereas private colleges rely heavily on private contributions, donations and tuition. The goal of our analysis is to compare public institutions and private colleges in terms of their **performance**.  A college degree or postsecondary certificate is more important than ever. However, many students are not confident enough to making decision on the type of school they should choose. Our analysis aims at helping students understand the differences between public institutions and private colleges in terms of school size, school performance, tuition cost, degrees awarded, students' background and geographic information. The analysis should give potential students a brief overview of these two types of schools. 
 
 
 ##DataSet Description
 
-The subset of Variables we plan to use is:
+There are 26 variables that we are interested in. The variables name,  type and descriptions are listed below. 
 
-*HIGHDEG - highest degree awarded (a factor variable with 5 levels 0-non degree awarded; 4 - graduate degree)
-*REGION - the region where the college is located (a factor variable with 10 leves describing a number of regions such as New England, Mid East, Great Lakes etc)
-*NPT4_PRIV - average annual cost of attendance a Private college inclusing tuiton, supplies, living expenses minus the average grand or scholarship; the cost is calculated for full-time, fist-time, degree and certificate seeking undergraduates
-*NPT4_PUB - average annual cost of attendance a Private college inclusing tuiton, supplies, living expenses minus the average grand or scholarship; the cost is calculated for full-time, fist-time, degree and certificate seeking undergraduates
-*NUMBRANCH - Number of Branch Campuses
-*CCBASIC - Carnegie Classification which describes the colleges as either Associate's collegeSpecial focus, Baccalaureatte/Associate, Doctoral University, Tribal college
-*CONTROL - describes the college as Private (for profit), Private(non profit), Public
+*For variable NPT4_PRIV and NPT4_PUB, they includes tuiton, supplies, living expenses minus the average grand or scholarship; the cost is calculated for full-time, fist-time, degree and certificate seeking undergraduates
+
+*For variable CCBASIC, the Carnegie Classification describes the colleges as either Associate's collegeSpecial focus, Baccalaureatte/Associate, Doctoral University, or Tribal college. 
+
 
 |Variables        |Type     |Descriptions|
 |-----------------|---------|-------------------------------
 |Type             |Factor   |Public or Private Institution|
 |State            |Factor   |State|
-|Family_Inc       |Numeric  |Average family income in real 2015 dollars|
-|Female           |Numeric  |Percentage of female students|
-|Married          |Numeric  |Percentage of married students|
-|Ind_Per          |Numeric  |Percentage of financially independent students|
-|First_Gen        |Numeric  |Percentage of first generation students|
+|Family_Inc       |FLOAT    |Average family income in real 2015 dollars|
+|Female           |FLOAT    |Percentage of female students|
+|Married          |FLOAT    |Percentage of married students|
+|Ind_Per          |FLOAT    |Percentage of financially independent students|
+|First_Gen        |FLOAT    |Percentage of first generation students|
 |Degree           |Factor   |Predominant degree awarded |
+|HIGHDEG          |Factor   |Highest degree awarded (0-non degree awarded;4-graduate degree)|
+|REGION           |Factor   |The region where the college is located (10 levels)|
+|NPT4_PRIV        |FLOAT    |Average annual cost of attendance a Private college|
+|NPT4_PUB         |FLOAT    |Average annual cost of attendance a Public college|
+|NUMBRANCH        |FLOAT    |Number of Branch Campuses|
+|CCBASIC          |INTEGER  |Carnegie Classification which describes the colleges|
+|PCIP01           |FLOAT    |Percentage of degrees awarded in Agriculture , Agriculture Operations, And Related Sciences|
+|PCIP03           |FLOAT    |Percentage of degrees awarded in Natural Resources And Conservation|
+|PCIP04           |FLOAT    |Percentage of degrees awarded in Architecture And Related Services|
+|PCIP05           |FLOAT    |Percentage of degrees awarded in Area, Ethnic, Cultural, Gender, And Group Studies|
+|PCIP09           |FLOAT    |Percentage of degrees awarded in Communication, Journalism, And Related Programs|
+|PCIP10           |FLOAT    |Percentage of degrees awarded in Communications Technologies/Technicians And Support Services|
+|CDR3             |FLOAT    |Three-year cohort default rate|
+|CDR3_DENOM       |FLOAT    |Number of students in the cohort for the three-year cohort default rate|
+|PCTPELL          |FLOAT    |Percentage of undergraduates who receive a Pell Grant|
+|PCTFLOAN         |FLOAT    |Percent of all federal undergraduate students receiving a federal student loan|
+|DEBT_N           |FLOAT    |The number of students in the median debt completers cohort|
+|CUML_DEBT_N      |FLOAT    |Number of students in the cumulative loan debt cohort|
+
 
 
 ##Objectives
+To better understand the differences between private colleges and public institutions, the descriptive statistical analysis is conducted. The detailed steps are describled as following:
+1. Import and prepare dataset. 
+This step imports dataset from local dictionary into R and read the file as csv file. All the necessary packages are installed in the R for later analysis and data visualization. Since we are interested in 26 variables, we select 26 variables from original dataset and create a new dataset for further analysis. The data manipulation is not implemented in the original dataset. 
 
+2. Data preparation. 
+In this step, in the new dataset we created, missing values for each variables are ensured less than 20% of the total values; data type is transferred into the proper type for analyzing convenience; the target variable Type, Private or Public is code as 0 for private and 1 for public; some independent variables are renamed for interpretation purpose. This step cleans and prepares all the data for further analysis. Dplyr is widely used in this step. 
 
+3. Data summary
+In this step, basic statistical analysis is conducted. The mean, median, and the variance is calculated for each numeric variables. This can help with the general understanding of the dataset. Dplyr is widely used in this step. 
 
+4. Relationship among variables
+In this step, the relationship between target variables and independent variables as well as the relationship among independent variables is analyzed. When it comes to the relationship among independent variables, the correlation among independent variables from the same category is tested as well as the correlation among independent variables cross different categories. This will help to get the insights on the difference between private colleges and public institutions. This step is crucial in achieving our goal. Ggplot is widely used in this step. 
+
+5. Conclusion
+This step summarizes the descriptive results for private colleges and public institutions. The descriptive analysis indicates the difference between private school and public school from perspectives such as students’ background, degree awarded, tuitions and stc. The result can help students understand private and public school better and help them make decision for their education goal. 
 ##Data Preparation
 
 ### 5.1 Libraries used
