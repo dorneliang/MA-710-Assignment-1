@@ -181,6 +181,7 @@ csb.var.df %>%
 ###Sev
 We will use some graphs in order to explore further the variables and the relationship between them. Since we are considering the variables through the Public vs Private category, when exploring the variables we will use different colors to emphasize the differences which come with Private vs Public colleges.
 
+(all of my part is moved into the next section; I did some summary of the data but that's basically the same as the rest of the team)
 
 ### Neha
 ## 5.1 Family Income, Female, Married, Percentage of financially independent student and Percentage of first generation students
@@ -257,12 +258,14 @@ The result indicated that the averages of the percentage of awarded degree in th
 ##Variable relationship
 
 ###Sev
+In this section we will focus on comparing the Public vs Private colleges based on some basic characteristics such as location by region, level of degrees offered, number of campuses etc.
+
 ```{r, cache=TRUE}
 
 #Total number pf Public vs Private colleges = there are at least twice as more Private colleges compared to Public
 merged2014.vars.df %>%
-  ggplot  (aes(x   = as.factor(PUBLIC))) +
-  geom_bar(aes(fill=PUBLIC)) 
+  ggplot  (aes(x   = as.factor(CONTROL))) +
+  geom_bar(aes(fill=CONTROL)) 
 ```
 
 From the graph above we can see that there are appriximately 2,000 Public colleges in the data set we are exploring. The number of Private colleges is more than twice the number of Public colleges.That means that we will have more data available for Private colleges and we will be able to draw more conclusion for them based on the dataset.
@@ -274,7 +277,7 @@ The Region variable gives information which region a college belongs to. The gra
 #College count by Region colored by Public vs Private
 merged2014.vars.df %>%
   ggplot(aes(x=as.factor(REGION))) +
-  geom_bar(aes(fill= as.factor(PUBLIC)))
+  geom_bar(aes(fill= as.factor(CONTROL)))
 ```
 
 Based on the graph, we can see that the colleges are not equally distributed among regions. Some regions such as numbers 2(Mid East),3(Great Lakes) and 5(Southeast) have much  larger amount of colleges compared to 7(Rocky Mountains) and 9(Outlying areas). In addition the ratio of the Public vs Private colleges changes between regions.
@@ -287,7 +290,7 @@ The variable CCBASIC describes the Carnegie classification of colleges. There ar
 #
 merged2014.vars.df %>%
   ggplot(aes(x=as.factor(CCBASIC))) +
-  geom_bar(aes(fill= as.factor(PUBLIC)),
+  geom_bar(aes(fill= as.factor(CONTROL)),
             position='dodge')
 
 ```
@@ -305,12 +308,12 @@ merged2014.vars.df %>%
 
 merged2014.vars.pub.ccbasic.df %>%
   ggplot(aes(x=as.factor(CCBASIC))) +
-  geom_bar(aes(fill= as.factor(PUBLIC)),
+  geom_bar(aes(fill= as.factor(CONTROL)),
             position='dodge')
 
 merged2014.vars.priv.ccbasic.df %>%
   ggplot(aes(x=as.factor(CCBASIC))) +
-  geom_bar(aes(fill= as.factor(PUBLIC)),
+  geom_bar(aes(fill= as.factor(CONTROL)),
             position='dodge')
 
 ```
@@ -324,7 +327,7 @@ The next variable to explore is the Number of Branches. Again we will see the di
 #
 merged2014.vars.df %>%
   ggplot(aes(x=as.factor(NUMBRANCH))) +
-  geom_bar(aes(fill= as.factor(PUBLIC)),
+  geom_bar(aes(fill= as.factor(CONTROL)),
             position='dodge')
 ```
 
@@ -335,7 +338,7 @@ The next variable in our exploratory analysis is the HIGHDEG. It describes the h
 ```{r, cache=TRUE}
 merged2014.vars.df %>%
   ggplot(aes(x=as.factor(HIGHDEG))) +
-  geom_bar(aes(fill= as.factor(PUBLIC)),
+  geom_bar(aes(fill= as.factor(CONTROL)),
             position='dodge')
 ```
 
@@ -347,9 +350,9 @@ The last variable to explore is the Tuiton(NPT4).
 ```{r, cache=TRUE}
 #College count by NPT colored by Public vs Private
 merged2014.vars.df %>%
-  ggplot(aes(x=as.factor(PUBLIC),
+  ggplot(aes(x=as.factor(CONTROL),
              y=NPT4)) + 
-  geom_boxplot(aes(fill=PUBLIC)) 
+  geom_boxplot(aes(fill=CONTROL)) 
 ```
 
 
@@ -357,7 +360,7 @@ Based on the box plots, we can see that the Private colleges(on the left) are mo
 
 The next step is to explore some variable relationships.
 
-The first relationship to focus on is whether the is a strong relationship between the tuiton and the number of branches.
+The first relationship to focus on is whether there is a strong relationship between the tuiton and the number of branches.
 
 ```{r}
 #NPT4 by Number of branches
@@ -377,7 +380,7 @@ The next relationship, we are interested in is to see how the tuiton relates to 
 #NPT by REGION and by Public
 merged2014.vars.df %>%
   ggplot(aes(x=as.factor(REGION), y=NPT4)) +
-  geom_boxplot(aes(fill=as.factor(PUBLIC)))
+  geom_boxplot(aes(fill=as.factor(CONTROL)))
 
 ```
 
@@ -389,7 +392,7 @@ The next comparison is between the Classification and the Tuiton. We are explori
 #NPT by CCASIC and by Public
 merged2014.vars.df %>%
   ggplot(aes(x=CCBASIC, y=NPT4)) +
-  geom_point(aes(color=PUBLIC))
+  geom_point(aes(color=CONTROL))
 
 ```
 
@@ -399,10 +402,10 @@ It is also interesting to explore whether some regions tend to have colleges wit
 
 
 ```{r}
-#NUMBRANCH by REGION and by Public
+#NUMBRANCH by REGION and by 
 merged2014.vars.df %>%
   ggplot(aes(x=as.factor(REGION), y=NUMBRANCH)) +
-  geom_point(aes(color=PUBLIC))
+  geom_point(aes(color=CONTROL))
 
 ```
 
