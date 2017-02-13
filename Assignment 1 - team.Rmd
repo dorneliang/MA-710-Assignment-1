@@ -28,7 +28,11 @@ The goal of the data is to increase the transperancy related to how differnet co
 
 
 ##Goals
+The goal of our analysis is to compare of public institution and private colleges in terms of their **performance**.  A college degree or postsecondary certificate is more important than ever. However, many students feel unprepared for the choices of "Public" or "Private" they need to make. Do public colleges serve their students better? Or the answer is "Private"?
 
+"private colleges vs. public colleges"- there is a face-off that's been ongoing for many years. The major difference between public and private colleges lies in how they are funed. Public colleges are funded mostly by state governments, whereas private colleges rely heavily on private contributions, donations and tuition. there are more differences between private and public colleges: size, class size, demographics and etc.
+
+There are many different metrics in terms of evaluting performance of colleges from different perspectives. Our analysis mainly focus on the difference between public and private colleges in serving students. 
 
 
 
