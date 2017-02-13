@@ -36,16 +36,16 @@ There are 26 variables that we are interested in. The variables name,  type and 
 
 |Variables        |Type     |Descriptions|
 |-----------------|---------|-------------------------------
-|Type             |Factor   |Public or Private Institution|
-|State            |Factor   |State|
+|Type             |FACTOR   |Public or Private Institution|
+|State            |FACTOR   |State|
 |Family_Inc       |FLOAT    |Average family income in real 2015 dollars|
 |Female           |FLOAT    |Percentage of female students|
 |Married          |FLOAT    |Percentage of married students|
 |Ind_Per          |FLOAT    |Percentage of financially independent students|
 |First_Gen        |FLOAT    |Percentage of first generation students|
-|Degree           |Factor   |Predominant degree awarded |
-|HIGHDEG          |Factor   |Highest degree awarded (0-non degree awarded;4-graduate degree)|
-|REGION           |Factor   |The region where the college is located (10 levels)|
+|Degree           |FACTOR   |Predominant degree awarded |
+|HIGHDEG          |FACTOR   |Highest degree awarded (0-non degree awarded;4-graduate degree)|
+|REGION           |FACTOR   |The region where the college is located (10 levels)|
 |NPT4_PRIV        |FLOAT    |Average annual cost of attendance a Private college|
 |NPT4_PUB         |FLOAT    |Average annual cost of attendance a Public college|
 |NUMBRANCH        |FLOAT    |Number of Branch Campuses|
