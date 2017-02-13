@@ -26,6 +26,7 @@ The goal of the data is to increase the transperancy related to how differnet co
 
 
 
+
 ##Goals
 
 
@@ -43,116 +44,110 @@ The subset of Variables we plan to use is:
 *CCBASIC - Carnegie Classification which describes the colleges as either Associate's collegeSpecial focus, Baccalaureatte/Associate, Doctoral University, Tribal college
 *CONTROL - describes the college as Private (for profit), Private(non profit), Public
 
-
+|Variables        |Type     |Descriptions|
+|-----------------|---------|-------------------------------
+|Type             |Factor   |Public or Private Institution|
+|State            |Factor   |State|
+|Family_Inc       |Numeric  |Average family income in real 2015 dollars|
+|Female           |Numeric  |Percentage of female students|
+|Married          |Numeric  |Percentage of married students|
+|Ind_Per          |Numeric  |Percentage of financially independent students|
+|First_Gen        |Numeric  |Percentage of first generation students|
+|Degree           |Factor   |Predominant degree awarded |
 
 
 ##Objectives
 
 
 
+##Data Preparation
 
+```{r}
+# Read in the csv file using `read_csv` function
+csb.df = read_csv(paste0('/Users/akhoury/Desktop/MA 710/Assignment-1/CollegeScorecard_Raw_Data/', 
+                         'MERGED2014_15_PP.csv'))
+```
+
+```{r}
+# List the variable names from the dataset
+names(csb.df)
+```
+
+```{r}
+# Remove those institutions(rows) which are not currently operating
+csb.df %>%
+  filter(CURROPER ==1) %>%
+  {.} -> csbop.df
+```
+
+```{r}
+# Look for variables to analyse and examine their class
+csbop.df %>%
+  select(CONTROL, ST_FIPS, FAMINC, FEMALE, MARRIED, 
+          DEP_STAT_PCT_IND, FIRST_GEN, PREDDEG ) %>%
+  {.} -> csb.vars.df
+str(csb.vars.df)
+```
+
+```{r}
+# Change the class of certain variables as needed
+csb.vars.df %>% 
+  mutate(FAMINC  = as.numeric(FAMINC),
+         FEMALE = as.numeric(FEMALE), 
+         MARRIED  = as.numeric(MARRIED),
+         DEP_STAT_PCT_IND = as.numeric(DEP_STAT_PCT_IND),
+         FIRST_GEN = as.numeric(FIRST_GEN),
+         CONTROL    = as.factor(CONTROL),
+         ST_FIPS = as.factor(ST_FIPS),
+         PREDDEG = as.factor(PREDDEG)) %>%
+         {.} -> csb.class.df
+```
+
+```{r}
+# Check for the percentage of NA (missing) values for the above range of variables
+csb.class.df %>% 
+  summarise_at(.cols = vars(),
+               .funs = function(x) sum(is.na(x))/length(x))*100
+```
+
+```{r}
+# Select those variables with less than 20% missing values 
+csb.class.df %>%
+  select(CONTROL, ST_FIPS, DISTANCEONLY, FAMINC, FEMALE, MARRIED, 
+         DEP_STAT_PCT_IND, FIRST_GEN, PREDDEG ) %>% 
+         {.} -> csb.var.df
+```
+
+```{r}
+# Combine private for-profit and private non-profit levels in the Type variable. Type = 1 for public,
+# Type = 0 for Private
+csb.var.df %>%
+  mutate(CONTROL = ifelse((CONTROL==2|CONTROL==3),0,1)) %>%
+  mutate(CONTROL    = as.factor(CONTROL)) %>%
+  {.} ->csb.new.df
+```
+
+```{r}
+# Rename the chosen variables
+csb.new.df %>%
+  rename(Type = CONTROL,
+         State = ST_FIPS,
+         Distance = DISTANCEONLY,
+         Family_Inc = FAMINC,
+         Female = FEMALE,
+         Married = MARRIED,
+         Ind_Per = DEP_STAT_PCT_IND,
+         First_Gen = FIRST_GEN,
+         Degree = PREDDEG) %>%
+         {.} -> csb.ren.df
+```
+
+
+We can see that the selected variables are mostly without missing values. The exception is CCBASIC which has 421 missing values or the equivalent of 5.46% from the data. Since this is an important variable for us and considering the fact approximately 5% are msising values, we will use the CCBASIC variabe for our analysis.
 
 ##Variable Summaries
 
-
-For this project, we will use the readr, dplrt and ggplot2 packages. The readr package is used to read the data from the csv file, the dyplr package is for sumamrizing, selecting and mutating the dataset and the ggplot2 package is used for data visualization purposes.
-
-First we read the data into a dataframe variable
-
-```{r merged2014, cashe = TRUE, echo= FALSE, warning=FALSE, message = FALSE}
-
-library(readr)
-library(dplyr)
-library(ggplot2)
-
-merged2014.df = data.frame()
-merged2014.df = data.frame(read_csv(paste0('C:/Users/sevda/Documents/Bentley/710/Assignment 1/CollegeScorecard_Raw_Data/CollegeScorecard_Raw_Data/', 
-                          'MERGED2014_15_PP.csv')))
-```
-
-
-Base on our decision to select certain variables, we will use the SELECT command to create a smaller data frame which contains only the variables of interest.
-
-```{r, cache=TRUE}
-
-merged2014.df %>%
-  select(OPEID, HIGHDEG, REGION, NPT4_PRIV, NPT4_PUB, NUMBRANCH, CCBASIC, CONTROL) %>%
-  {.} -> merged2014.vars.df
-str(merged2014.vars.df)
-
-```
-
-From the R output, we can see that part of the variables are not in the correct format.NTP4_PRIV (Average net price for attending a private college) and NTP4_PUB (Average net price for attending a public college) are vector of characters. However the actual values should be integers because the two variables represent either scores or the amount of tuition. For that reason we will perform mutation of the variables from character to numerics.
-
-
-```{r, cache=TRUE}
-# Change the class of certain variables as needed
-merged2014.vars.df %>% 
-  mutate(OPEID = as.numeric(OPEID),
-         NPT4_PRIV = as.numeric(NPT4_PRIV), 
-         NPT4_PUB  = as.numeric(NPT4_PUB)) %>%
-  {.} -> merged2014.vars.df
-```
-
-Since NTP4_PRIV and NTP4_PUB describes the average net price of either Public or Private colleges, they are complementing each other. For that reason, we will built a new variable(NPT4) which describes the average net price for both public and private colleges. The way we will build the new variable is by combining the information in both initial variables.
-
-```{r, cache=TRUE}
-
-#(replace na values with 0)
-  replace_na_values <- function (variable){
-    for (i in 1:length(variable)){
-      if (is.na(variable[i])){
-        variable[i] = 0
-      }
-    }
-    return (variable)
-  }
-#replace all the na values and creating a new variable which holds all the tuition expenses
-merged2014.vars.df %>% 
-  mutate(NPT4 = replace_na_values(NPT4_PRIV) + replace_na_values(NPT4_PUB)) %>%
-  {.} -> merged2014.vars.df
-```
-
-Since the objective of the project is to compare Public vs Private colleges, we need to create a new variable which will desceibe the college as either Public(1) or Private(0). The variable will be created from the original variable CONTROL which has three factor levels and describes the colleges as Private for profit, Private not for profit and Public.
-
-```{r, cache=TRUE}
-
-#Adding a varable which indicates whether it is public vs private
-merged2014.vars.df %>% 
-  mutate(PUBLIC = as.integer((CONTROL == 1))) %>%
-  {.} -> merged2014.vars.df
-```
-
-After the dataset variables are mutated and new ones are cerated, we are ready for the next step which is summarizing the variables.All the summarizing is performed  by first grouping the colleges by Public vs Private.
-
-```{r, cache=TRUE}
- 
- summarize(group_by(merged2014.vars.df, PUBLIC), 
-          mean_tuiton=mean(NPT4,na.rm=TRUE),
-          sd_tuiton = sd(NPT4, na.rm=TRUE),
-          median_tuiton=median(NPT4,na.rm=TRUE),
-          max_branches=max(NUMBRANCH,na.rm=TRUE),
-          mmedian_branches = median(NUMBRANCH, na.rm=TRUE),
-          mean_branches=mean(NUMBRANCH,na.rm=TRUE),
-          max_highdeg=max(HIGHDEG,na.rm=TRUE),
-          median_highdeg = median(HIGHDEG, na.rm=TRUE),
-          mean_highdeg=mean(HIGHDEG,na.rm=TRUE))
-
-# CODE for checking the missing value for all the variables..... Check for the number of NA (missing) values
-# for individual variables:
-merged2014.vars.df %>%
-  summarize( 
-    HIGHDEG.cnt.na = sum(is.na(HIGHDEG)),
-    REGION.cnt.na = sum(is.na(REGION)),
-    NPT4.cnt.na = sum(is.na(NPT4)),
-    NUMBRANCH.cnt.na = sum(is.na(NUMBRANCH)),
-    CCBASIC.cnt.na = sum(is.na(CCBASIC))
-  )
-
-```
-We can see that the selected variables are mostly without missing values. The exception is CCBASIC which has 421 missing values or the equivalent of 5.46% from the data. Since this is an important variable for us and considering the fact approximately 5% are msising values, we will use the CCBASIC variabe for our analysis.
-
-
+###Sev
 We will use some graphs in order to explore further the variables and the relationship between them. Since we are considering the variables through the Public vs Private category, when exploring the variables we will use different colors to emphasize the differences which come with Private vs Public colleges.
 
 ```{r, cache=TRUE}
@@ -253,9 +248,81 @@ merged2014.vars.df %>%
 
 Based on the box plots, we can see that the Private colleges(on the left) are more expensive compared to Public with some very expensive private colleges presented as outliers on the plot. The median of the tuiton for Public colleges is also lower than the median of the tuiton for Private colleges. The cheaper Private colleges are with comparable tuiton to the most expensive Public colleges.
 
+### Neha
+## 5.1 Family Income, Female, Married, Percentage of financially independent student and Percentage of first generation students
+
+The summary statistics for all the numeric variables were obtained using the `summarise_if` function. This function was used in combination with `is.numeric` to summarise only those variables which were numeric. We also grouped these variables by their `Type` which is Public or Private, beofre summarising.The descriptive measures chosen were mean, median and variance. The `options` command was used to set the column width to infinity inorder to see all the columns.The code used was : 
+```{r}
+options(dplyr.width=Inf)
+csb.ren.df %>% 
+  group_by (Type) %>%
+  summarise_if(is.numeric, funs(mean, median, var), na.rm=TRUE)
+print(Rail)
+```
+We can observe how these measures vary considerably for public and private institutions.Though the average family income for both type of institutions is roughly similar, the median family income for Public insitutions ($ 31,000) is ~$3,000 more than that of Private institutions. This is an interesting finding as private institutions being more expensive, should be expected to be attended by students coming from the higher income bracket. It can also be seen that private insitutions have a larger share of female students, married students, financially independent and first-generation students.
+
+## 5.2 Degree and type
+
+The following code is used to summarise the factor variables usig aggregates. We first group the institutions by their type and count the total number of institutions providing predominantly Certficate, Associate, Bachelor and Graduate degrees. The code used is:
+```{r}
+csb.ren.df %>% 
+  group_by(Type) %>%
+  summarise(Certificate=sum(Degree==1),
+            Associate=sum(Degree==2),
+            Bachelor=sum(Degree==3),
+            Graduate=sum(Degree==4))
+```
+The output tells us that there are 2904 institutions providing predominantly Certificate degree, 1298 institutions with Bachelor and 285 Graduate degree institutions.
+
+###Cheng
+
+To get a better understanding of our variables, we could adopt descriptive analysis to summary independent varibles. Furthermore, we could generate summary statistics respectively for two different categories of our target varivble- CONTROL:
+```{r}
+options(dplyr.width=Inf)
+csb.vars.df %>% 
+  group_by (CONTROL) %>%
+  summarise_if(is.numeric, funs(mean, median, var), na.rm=TRUE)
+```
+
+From the output, we could summarise that in terms of mean value:
+
+
+for variables *PCTPELL*, *PCTFLOAN*, *DEBT_N*, *CUML_DEBT_N*, public institutions(CONTROL=1) are much higher than Private insitituions.
+
+for variables *CDR3*, *CDR3_DENOM*, public institutions(CONTROL=1) are much lower than Private insitituions.
+
+
+In terms of median value:
+
+for variables *PCTPELL*, *PCTFLOAN*, *CUML_DEBT_N*, public institutions(CONTROL=1) are higher than Private insitituions.
+
+for variables *DEBT_N*, *CDR3*, *CDR3_DENOM*, public institutions(CONTROL=1) are lower than Private insitituions.
+
+
+In terms of variance:
+
+for variables *PCTPELL*, , *CUML_DEBT_N*, *DEBT_N*, *CDR3*, *CDR3_DENOM*, public institutions(CONTROL=1) are higher than Private insitituions.
+
+for variable *PCTFLOAN* public institutions(CONTROL=1) are slightly lower than Private insitituions.
+
+In conclusion, the summary statistics reveals that considerably differnece exists between two catories of target varible. 
+
+###Katie
+```{r}
+options(dplyr.width=Inf)
+csb.vars.df %>% 
+  group_by (CONTROL) %>%
+  summarise_if(is.numeric, funs(mean, median, var), na.rm=TRUE)
+```
+The result indicated that the averages of the percentage of awarded degree in those 6 fields are less than 1% .Among those 6 awarded degree, the mean of the PCIP09 is the largest regardless of the contorl type.This result indicates that among those 6 variables, percentages of degrees awarded in Communication are awarded more than otehr degree.The variance of those 6 variables are relatively samll, which means that from 2014 to 2015,the percentage of those 6 awarded degrees are almost the same in general. It does not vary to much in different institutes.PCIP01,PCIP03,PCIP05,PCIP09 degrees are awared more in public school than privated school. 
+
+
+
 
 
 ##Variable relationship
+
+###Sev
 
 The next step is to explore some variable relationships.
 
@@ -310,6 +377,202 @@ merged2014.vars.df %>%
 
 From the graph, we can see that the number of branches are approximately equally distributed between the regions. Region 1(New England) and Region 9 (Outlying areas) have colleges which are in general with slightly less number of branches. That could be explained by the geographical size of the resions. If the region is larger then it would make sense for the college to expand the number of branches in order to cover larger students' population.
 
+###Neha
+## 6.1 Financially Independent, First Generation and Family Income
+
+In order to visualise the relationship between the three numeric variables, family income, precentage of students who are financially independent and the percentage of first generation students, we use a tile graph. The x-axis represents the Financially independent students in percentage while the y-axis shows the percentage of first generation students. The color of the tile depicts the family income of students, white tiles for the low values and red for the high values of family income. The code used is :
+```{r}
+csb.ren.df %>%
+  ggplot +
+  aes(x=Ind_Per, 
+      y= First_Gen, 
+      z= Family_Inc) +
+  stat_summary2d(fun=mean) +
+  scale_fill_gradient(low="white", 
+                      high="red") 
+```
+It can be observed from the graph that the there is a strong positive correlation between first generation students and financially independent students. This implies that institutes that have a higher share of first generation students also seem to have a higher share of financially independent students. Another observation is that the red tiles are at the lower end of both axes, indicating that institutes with students coming from a background of higher family income tend to have lower percentage of both first generation and financially independent students. 
+
+## 6.2 Family Income, Degree and Type
+
+We now try to analyse the relationsip between family income of students, degree provided by institutons and the type of the insitution.Since it involved one numeric and two factor variables, we use a heat map.The x-axis represents the type, the y-axis denotes the degree and the color of the boxes stands for the average family income of students.The code used is:
+
+```{r}
+csb.ren.df %>%
+  group_by (Type, Degree) %>%
+  summarize(avg.inc=mean(Family_Inc, na.rm = TRUE)) %>%
+  ggplot   (aes(x=Type, y=Degree)) + 
+  geom_tile(aes(fill=avg.inc)) 
+```
+
+This output clearly depics that institutes with students having the highest average famnily income predominantly award Bachelors degree (Degree = 3). This is true for both public and private institutions. On the other hand, institutes that award Certificate degrees have students with the lowest family income. This could partly be explained by the high cost of the 4-year Bachelors program.
+
+## 6.3
+
+The code below is used to count the number of colleges in each state and arrange them from highest to lowest.
+```{r}
+csb.ren.df %>%
+  group_by(State) %>%
+  summarise(Num_of_Public = sum(Type == 1),
+            Num_of_Private = sum(Type == 0)) %>%
+  arrange(desc(Num_of_Public+Num_of_Private)) %>%
+  print (n=3)
+```
+
+From the output it can be seen that States 6,36 and 48 have the highest total number of colleges. These states are California, New York and Texas.For these top 3 states, we now would like to know which are the most popular degrees.
+
+```{r}
+csb.ren.df %>%
+  filter(State %in% c(6,36,48)) %>%
+  ggplot(aes(x=State)) + 
+  geom_bar(aes(fill=Degree), 
+           position='dodge') 
+```
+
+Certificate degrees seem to be the most popular in State 6 and 48 which are California and Texas. It is the second most popular degree after Bachelor's degree in New York. For these most popular certificate degrees, we wish to find the relationship between the type of institution, first generation students % and the family income of students.
+
+```{r}
+csb.ren.df %>%
+  filter(State %in% c(6,48,36) & Degree ==1) %>%
+  ggplot(aes(x=Family_Inc, y=First_Gen)) +
+  geom_point(aes(color=Type, size=3, alpha= 0.2)) + 
+  guides(size=FALSE)
+```
+
+We observe a negative correlation between the family income of students and the percentage of first generation students. This tell sus that for the most popular Certificate degrees in the most poular states California, New York and Texas, first generation students have lower family income. 
+
+###Cheng
+### 7.1 Target variable 'CONTROL'
+We use a bar plot to compare numbers of observations for the target variable *CONTROL*
+```{r}
+csb.vars.df %>%
+  ggplot  (aes(x   =CONTROL)) +
+  geom_bar(aes(fill=CONTROL))
+```
+
+From the plot above we can find that there are appriximately 2,000 Public insitituions. The number of Private colleges is nearly 5700.
+
+### 7.2 Target variable ~ independent variables
+We use box plot to compare distributions of each independent variable between two levels of target variable.
+### 7.2.1 "CONTROL"~"CDR3"
+```{r}
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=CDR3)) + 
+  geom_boxplot(aes(fill=CONTROL)) +
+    ylim(0, 0.6)
+```
+
+### 7.2.2 "CONTROL"~"CDR3_DENOM"
+```{r}
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=CDR3_DENOM)) + 
+  geom_boxplot(aes(fill=CONTROL)) +
+  ylim(0, 10000)
+```
+
+### 7.2.3 "CONTROL"~"PCTPELL"
+```{r}
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=PCTPELL)) + 
+  geom_boxplot(aes(fill=CONTROL))
+```
+
+### 7.2.4 "CONTROL"~"PCTFLOAN"
+```{r}
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=PCTFLOAN)) + 
+  geom_boxplot(aes(fill=CONTROL))
+```
+
+### 7.2.5 "CONTROL"~"DEBT_N"
+```{r}
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=DEBT_N)) + 
+  geom_boxplot(aes(fill=CONTROL)) +
+  ylim(0, 30000)
+```
+
+### 7.2.6 "CONTROL"~"CUML_DEBT_N"
+```{r}
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=CUML_DEBT_N)) + 
+  geom_boxplot(aes(fill=CONTROL)) +
+  ylim(0, 10000)
+```
+
+From all the box-plot above, we could conclude that the distribution of each variable are quite different for two levels of the target varible. We could draw the conclusion and achieve our initial goal based on our analysis output.
+
+
+###Katie
+
+#Target variables~independent variables:
+Control~PCIP01:
+```{r}
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=PCIP01)) + 
+  geom_boxplot(aes(fill=CONTROL)) +
+  ylim(0, 0.6)
+```
+The result indicates that the major percentage of taking argriculture degree is less than 0.1 percent in private school and less than 0.2 percent in public school. There are more outlier in private school. 
+```{r}
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=PCIP03)) + 
+  geom_boxplot(aes(fill=CONTROL)) +
+  ylim(0, 0.7)
+```
+The result indicates that the majority percentage of taking natural resource degree is less than 0.15 percent in public school and less than 0.1 percent in private school.There are more outliers in private school than in public school.In some private school, the natural degree is awarded more than other private school and public school.
+```{r}
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=PCIP04)) + 
+  geom_boxplot(aes(fill=CONTROL)) +
+  ylim(0, 0.5)
+```
+The result indicates that the majority percentage of taking Architecture degree is less than 0.07 percent in private and public school. Private school has higher Architecture degree pecentage than public school.There are more outliers in private school.
+```{r}
+csb.vars.df %>%
+ggplot(aes(x=CONTROL,
+           y=PCIP05)) + 
+  geom_boxplot(aes(fill=CONTROL)) +
+  ylim(0, 0.5)
+```
+The result indicates that the majority percentage of Ethnic degree in private school is less than 0.1 percent while it is less than 0.05 in public school. There more higher percentage of Ethnic dergree awarded in public school because public school has more outliers.
+```{r}
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=PCIP09)) + 
+  geom_boxplot(aes(fill=CONTROL)) +
+  ylim(0, 0.6)
+```
+The result indicates that majority of percentage of communication/juornal degree awarded is less than 0.025 in public school.Private school has more high percentage communication degress awarded and has more outliers.
+```{r}
+csb.vars.df %>%
+  ggplot(aes(x=CONTROL,
+             y=PCIP10)) + 
+  geom_boxplot(aes(fill=CONTROL)) +
+  ylim(0, 0.5)
+```
+The result indicates that the range of percentage of communication technology degree awarded in private school is larger than public school. Private school has higher percentage of communication technology degree awarded.The percentage of communication techonology degree awarded is more spread in private school than in public school. 
+
+
+#Among variables
+```{r}
+cor_matrix<-csb.vars.df %>%
+  group_by(CONTROL)%>%
+  do(as.data.frame(cor(.[,-1],method="spearman",use="pairwise.complete.obs")))
+cor_matrix1<- cor_matrix%>%
+  data.frame(row=rep(colnames(.)[-1],n_groups(.)))
+cor_matrix1
+```
+Among private school, PCIP03 and PCIP05 has some correlation, around 0.53.Among public school, PCIP05 and PCIP09 has some correlation around 0.46. 
 
 ##Conclusion
 
