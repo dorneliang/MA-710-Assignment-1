@@ -582,7 +582,7 @@ csb.ren.df %>%
 
 Because boxes overlap with both medians, no difference can be claimed. Namely we cannot tell if there is a difference in Three-year cohort default rate between public and private institutions.
 
-### 7.2.3 "CONTROL"~"PCTPELL"
+### "CONTROL"~"PCTPELL"
 ```{r}
 csb.ren.df %>%
   ggplot(aes(x=Type,
@@ -600,7 +600,7 @@ csb.ren.df %>%
 
 Because boxes overlap but not both medians, it is likely that the Percent of all federal undergraduate students receiving a federal student loan in public colleges is greater than the one of private insititues.
 
-### 7.2.5 "CONTROL"~"DEBT_N"
+### "CONTROL"~"DEBT_N"
 ```{r}
 csb.ren.df %>%
   ggplot(aes(x=Type,
