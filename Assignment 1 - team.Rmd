@@ -659,10 +659,39 @@ The result indicates that the range of percentage of communication technology de
 
 
 #### Among variables
+The correlation matrix is done among all the independent numeric variables. The code prepares all the numeric independent variables using as.numeric function. The correlation matrix function in dplyr is applied to get the correlation among independent variables. 
 ```{r}
-cor_matrix<-csb.ren.df %>%
+csb.ren.df %>%
+  select(Type,Family_Inc, Female,Married,Ind_Per, First_Gen, CDR3, CDR3_DENOM,PCTPELL, PCTFLOAN, DEBT_N, CUML_DEBT_N, NPT4_PRIV, NPT4_PUB, PCIP01,PCIP03,PCIP04,PCIP05,PCIP09,PCIP10) %>%
+  {.} -> csb.vars1.df
+  
+ csb.vars1.df%>%
+  mutate(Type=as.numeric(Type),
+         Family_Inc=as.numeric(Family_Inc), 
+         Female=as.numeric(Female),
+         Married=as.numeric(Married),
+         Ind_Per=as.numeric(Ind_Per), 
+         First_Gen=as.numeric(First_Gen), 
+         CDR3=as.numeric(CDR3), 
+         CDR3_DENOM=as.numeric(CDR3_DENOM),
+         PCTPELL=as.numeric(PCTPELL), 
+         PCTFLOAN=as.numeric(PCTFLOAN), 
+         DEBT_N=as.numeric(DEBT_N), 
+         CUML_DEBT_N=as.numeric(CUML_DEBT_N), 
+         NPT4_PRIV=as.numeric(NPT4_PRIV),
+         NPT4_PUB=as.numeric(NPT4_PUB),
+         PCIP01=as.numeric(PCIP01),
+         PCIP03=as.numeric(PCIP03),
+         PCIP04=as.numeric(PCIP04),
+         PCIP05=as.numeric(PCIP05),
+         PCIP09=as.numeric(PCIP09),
+         PCIP10=as.numeric(PCIP10))%>%
+  {.}->csb.vars2.df
+  
+  cor_matrix<-csb.vars2.df %>%
   group_by(Type)%>%
-  do(as.data.frame(cor(.,method="spearman",use="pairwise.complete.obs")))
+  do(as.data.frame(cor(.[,-1],method="spearman",use="pairwise.complete.obs")))
+
 cor_matrix1<- cor_matrix%>%
   data.frame(row=rep(colnames(.)[-1],n_groups(.)))
 cor_matrix1
