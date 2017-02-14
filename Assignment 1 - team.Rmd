@@ -321,7 +321,7 @@ The result indicated that the averages of the percentage of awarded degree in th
 
 ## 7.Variable relationship
 
-###Sev
+
 In this section we will focus on comparing the Public vs Private colleges based on a number of characteristics that describes the colleges such as the cost of attendance, income level of students, loan information and repayment rates,gender, degrees.
 
 First we will look at the total number of Public and Private colleges.
@@ -471,7 +471,7 @@ csb.ren.df %>%
 
 From the graph, we can see that the number of branches are approximately equally distributed between the regions. Region 1(New England) and Region 9 (Outlying areas) have colleges which are in general with slightly less number of branches. That could be explained by the geographical size of the regions. If the region is larger then it would make sense for the college to expand the number of branches in order to cover larger students' population.
 
-###Neha
+
 
 As a next variable relationship in our analysis, we will focus on financial independence, first generation and family income. In order to visualize the relationship between the three numeric variables, family income, percentage of students who are financially independent and the percentage of first generation students, we use a tile graph. The x-axis represents the Financially independent students in percentage while the y-axis shows the percentage of first generation students. The color of the tile depicts the family income of students, white tiles for the low values and red for the high values of family income. The code used is :
 ```{r}
@@ -532,7 +532,7 @@ csb.ren.df %>%
 
 We observe a negative correlation between the family income of students and the percentage of first generation students. This tell us that for the most popular Certificate degrees in the most popular states California, New York and Texas, first generation students have lower family income. 
 
-###Cheng
+
 #### DEBT_N, CUML_DEBT_N:
 Positive linear correlation exists between variable DEBT_N(The number of students in the median debt completers cohort) and variable (Number of students in the cumulative loan debt cohort). A smooth line is drawn through the data points. We could fine that the smooth line is straight line, thus the positive linear correlation between these two variables are pretty strong. 
 ```{r}
@@ -564,7 +564,7 @@ csb.ren.df %>%
 
 To evaluate the performance of public and private institution, We use box-plot:  
 
-#### "CONTROL"~"CDR3":
+#### "Type"~"CDR3":
 ```{r}
 csb.ren.df %>%
   ggplot(aes(x=Type,
@@ -575,7 +575,7 @@ csb.ren.df %>%
 
 Because boxes overlap with both medians, no difference can be claimed. Namely we cannot tell if there is a difference in Three-year cohort default rate between public and private institutions.
 
-#### "CONTROL"~"PCTPELL":
+#### "Type"~"PCTPELL":
 ```{r}
 csb.ren.df %>%
   ggplot(aes(x=Type,
@@ -593,7 +593,7 @@ csb.ren.df %>%
 
 Because boxes overlap but not both medians, it is likely that the Percent of all federal undergraduate students receiving a federal student loan in private colleges is greater than the one of public institutes.
 
-#### "CONTROL"~"DEBT_N":
+#### "Type"~"DEBT_N":
 ```{r}
 csb.ren.df %>%
   ggplot(aes(x=Type,
@@ -604,10 +604,7 @@ csb.ren.df %>%
 
 Because boxes overlap with both medians, no difference can be claimed. Namely we cannot tell if there is a difference in The number of students in the median debt completers cohort between public and private institutions.
 
-### Katie
-
-#### Target variables~independent variables:
-Control~PCIP01:
+#### "Type"~"PCIP01":
 ```{r}
 csb.ren.df %>%
   ggplot(aes(x=Type,
@@ -616,6 +613,8 @@ csb.ren.df %>%
   ylim(0, 0.6)
 ```
 The result indicates that the major percentage of taking agriculture degree is less than 0.1 percent in private school and less than 0.2 percent in public school. There are more outlier in private school. 
+
+#### "Type"~"PCIP03":
 ```{r}
 csb.ren.df %>%
   ggplot(aes(x=Type,
@@ -624,6 +623,8 @@ csb.ren.df %>%
   ylim(0, 0.7)
 ```
 The result indicates that the majority percentage of taking natural resource degree is less than 0.15 percent in public school and less than 0.1 percent in private school.There are more outliers in private school than in public school.In some private school, the natural degree is awarded more than other private school and public school.
+
+#### "Type"~"PCIP04":
 ```{r}
 csb.ren.df %>%
   ggplot(aes(x=Type,
@@ -632,6 +633,8 @@ csb.ren.df %>%
   ylim(0, 0.5)
 ```
 The result indicates that the majority percentage of taking Architecture degree is less than 0.07 percent in private and public school. Private school has higher Architecture degree percentage than public school.There are more outliers in private school.
+
+#### "Type"~"PCIP05":
 ```{r}
 csb.ren.df %>%
 ggplot(aes(x=Type,
@@ -640,6 +643,8 @@ ggplot(aes(x=Type,
   ylim(0, 0.5)
 ```
 The result indicates that the majority percentage of Ethnic degree in private school is less than 0.1 percent while it is less than 0.05 in public school. There more higher percentage of Ethnic degree awarded in public school because public school has more outlines.
+
+#### "Type"~"PCIP09":
 ```{r}
 csb.ren.df %>%
   ggplot(aes(x=Type,
@@ -648,6 +653,8 @@ csb.ren.df %>%
   ylim(0, 0.6)
 ```
 The result indicates that majority of percentage of communication/journal degree awarded is less than 0.025 in public school.Private school has more high percentage communication egress awarded and has more outliers.
+
+#### "Type"~"PCIP10":
 ```{r}
 csb.ren.df %>%
   ggplot(aes(x=Type,
