@@ -181,7 +181,9 @@ csb.vars.df %>%
          {.} -> csb.class.df
 ```
 
-The next step is to check for the percentage of NA (missing) values for the above range of variables. This is accomplished by first adding the number of NA values for each variable, dividing it by the `length` of the variable(total number of observations) and multiplying by 100 to convert it into percentage. Since we would like to apply this function to a range of variables, we use `summarise_at` command. `summarise_at` takes the set of columns to be summarised as the first parameter which in our case wold be all columns and the function to be applied to them as the second parameter.
+The next step is to check for the percentage of NA (missing) values for the above range of variables. This is accomplished by first adding the number of NA values for each variable, dividing it by the `length` of the variable(total number of observations) and multiplying by 100 to convert it into percentage. 
+
+Since we would like to apply this function to a range of variables, we use `summarise_at` command. `summarise_at` takes the set of columns to be summarised as the first parameter which in our case wold be all columns and the function to be applied to them as the second parameter.
 
 ```{r}
 csb.class.df %>% 
@@ -202,7 +204,7 @@ csb.class.df %>%
 
 The selected variables are then put into a new dataframe `csb.var.df`. 
 
-Since the goal of our project is to compare public and private institutions, we want to combine the two types of private institutions : private for-profit and private non-profit into one group called private institutions. We use the `ifelse` command to achieve this by assigning level 0 ( private) to those institutions with a value of 2 (private for-profit) or 3(private non-profit) and level 1 to public institutions. 
+As the goal of our project is to compare public and private institutions, we want to combine the two types of private institutions : private for-profit and private non-profit into one group called private institutions. We use the `ifelse` command to achieve this by assigning level 0 ( private) to those institutions with a value of 2 (private for-profit) or 3(private non-profit) and level 1 to public institutions. 
 
 ```{r}
 
@@ -214,7 +216,7 @@ csb.var.df %>%
 
 The dataframe `csb.new.df` now contains the mutated variable `CONTROL` with only two levels - 0 for private institutions and 1 for public institutions.
 
-The variables `NTP4_PRIV` and `NTP4_PUB` describes the average net price of either Public or Private colleges, and are complementing each other. For that reason, we will built a new variable `NPT4` which describes the average net price for both public and private colleges.
+The variables `NTP4_PRIV` and `NTP4_PUB` describes the average net price of either Public or Private colleges, and are complementing each other. For this reason, we will built a new variable `NPT4` which describes the average net price for both public and private colleges.
 
 To do this, we first define a function `replace_na_values` which takes the variable as the input and by looping over th entire length of the variable, replaces each NA values by 0.  We call this function on our two variables `NPT4_PRIV` and `NPT4_PUB`. Then we create a new variable `NPT4` by adding the two variables `NPT4_PRIV` and `NPT4_PUB` using the `MUTATE` command.
 
