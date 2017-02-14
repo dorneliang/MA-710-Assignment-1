@@ -121,8 +121,8 @@ library(readr)
 
 We read in the csv file `MERGED2014_15_PP.csv` into the dataframe `csb.df` using the `read_csv` function of the `readr` package.
 ```{r}
-csb.df = read_csv(paste0('/Users/akhoury/Desktop/MA 710/Assignment-1/CollegeScorecard_Raw_Data/', 
-                         'MERGED2014_15_PP.csv'))
+csb.df = read_csv(paste0('C:/Users/Chengdong Liang/Desktop/MA 710/Assignment 1/CollegeScorecard_Raw_Data/', 'MERGED2014_15_PP.csv'))
+
 ```
 ### 5.3 Data cleaning and variable modification
 
@@ -327,9 +327,9 @@ In this section we will focus on comparing the Public vs Private colleges based 
 ```{r, cache=TRUE}
 
 #Total number pf Public vs Private colleges = there are at least twice as more Private colleges compared to Public
-merged2014.vars.df %>%
-  ggplot  (aes(x   = as.factor(CONTROL))) +
-  geom_bar(aes(fill=CONTROL)) 
+csb.ren.df %>%
+  ggplot  (aes(x   = as.factor(Type))) +
+  geom_bar(aes(fill=Type)) 
 ```
 
 From the graph above we can see that there are appriximately 2,000 Public colleges in the data set we are exploring. The number of Private colleges is more than twice the number of Public colleges.That means that we will have more data available for Private colleges and we will be able to draw more conclusion for them based on the dataset.
@@ -339,9 +339,9 @@ The Region variable gives information which region a college belongs to. The gra
 
 ```{r, cache=TRUE}
 #College count by Region colored by Public vs Private
-merged2014.vars.df %>%
+csb.ren.df %>%
   ggplot(aes(x=as.factor(REGION))) +
-  geom_bar(aes(fill= as.factor(CONTROL)))
+  geom_bar(aes(fill= as.factor(Type)))
 ```
 
 Based on the graph, we can see that the colleges are not equally distributed among regions. Some regions such as numbers 2(Mid East),3(Great Lakes) and 5(Southeast) have much  larger amount of colleges compared to 7(Rocky Mountains) and 9(Outlying areas). In addition the ratio of the Public vs Private colleges changes between regions.
@@ -352,9 +352,9 @@ The variable CCBASIC describes the Carnegie classification of colleges. There ar
 
 #College count by CCBASIC colored by Public vs Private
 #
-merged2014.vars.df %>%
+csb.ren.df %>%
   ggplot(aes(x=as.factor(CCBASIC))) +
-  geom_bar(aes(fill= as.factor(CONTROL)),
+  geom_bar(aes(fill= as.factor(Type)),
             position='dodge')
 
 ```
@@ -362,22 +362,22 @@ From the plot, we can see that some categories are stronger represented. A signi
 
 
 ```{r, cache=TRUE}
-merged2014.vars.df %>% 
+csb.ren.df %>% 
   filter(CCBASIC %in% c(1:9, 14:18)) %>%
   {.} -> merged2014.vars.pub.ccbasic.df
 
-merged2014.vars.df %>% 
+csb.ren.df %>% 
   filter(CCBASIC %in% c(10:13, 19:33)) %>%
   {.} -> merged2014.vars.priv.ccbasic.df
 
 merged2014.vars.pub.ccbasic.df %>%
   ggplot(aes(x=as.factor(CCBASIC))) +
-  geom_bar(aes(fill= as.factor(CONTROL)),
+  geom_bar(aes(fill= as.factor(Type)),
             position='dodge')
 
 merged2014.vars.priv.ccbasic.df %>%
   ggplot(aes(x=as.factor(CCBASIC))) +
-  geom_bar(aes(fill= as.factor(CONTROL)),
+  geom_bar(aes(fill= as.factor(Type)),
             position='dodge')
 
 ```
@@ -389,9 +389,9 @@ The next variable to explore is the Number of Branches. Again we will see the di
 ```{r}
 #College count by NUMBRANCH colored by Public vs Private
 #
-merged2014.vars.df %>%
+csb.ren.df %>%
   ggplot(aes(x=as.factor(NUMBRANCH))) +
-  geom_bar(aes(fill= as.factor(CONTROL)),
+  geom_bar(aes(fill= as.factor(Type)),
             position='dodge')
 ```
 
@@ -413,10 +413,10 @@ The last variable to explore is the Tuiton(NPT4).
 
 ```{r, cache=TRUE}
 #College count by NPT colored by Public vs Private
-merged2014.vars.df %>%
-  ggplot(aes(x=as.factor(CONTROL),
+csb.ren.df %>%
+  ggplot(aes(x=as.factor(Type),
              y=NPT4)) + 
-  geom_boxplot(aes(fill=CONTROL)) 
+  geom_boxplot(aes(fill=Type)) 
 ```
 
 
@@ -428,7 +428,7 @@ The first relationship to focus on is whether there is a strong relationship bet
 
 ```{r}
 #NPT4 by Number of branches
-ggplot(data=merged2014.vars.df) + 
+ggplot(data=csb.ren.df) + 
   aes(x=NPT4,
       y=NUMBRANCH) + 
   geom_point(size=1,
@@ -442,9 +442,9 @@ The next relationship, we are interested in is to see how the tuiton relates to 
 
 ```{r}
 #NPT by REGION and by Public
-merged2014.vars.df %>%
+csb.ren.df %>%
   ggplot(aes(x=as.factor(REGION), y=NPT4)) +
-  geom_boxplot(aes(fill=as.factor(CONTROL)))
+  geom_boxplot(aes(fill=as.factor(Type)))
 
 ```
 
@@ -454,9 +454,9 @@ The next comparison is between the Classification and the Tuiton. We are explori
 
 ```{r}
 #NPT by CCASIC and by Public
-merged2014.vars.df %>%
+csb.ren.df %>%
   ggplot(aes(x=CCBASIC, y=NPT4)) +
-  geom_point(aes(color=CONTROL))
+  geom_point(aes(color=Type))
 
 ```
 
@@ -467,9 +467,9 @@ It is also interesting to explore whether some regions tend to have colleges wit
 
 ```{r}
 #NUMBRANCH by REGION and by 
-merged2014.vars.df %>%
+csb.ren.df %>%
   ggplot(aes(x=as.factor(REGION), y=NUMBRANCH)) +
-  geom_point(aes(color=CONTROL))
+  geom_point(aes(color=Type))
 
 ```
 
@@ -539,123 +539,127 @@ csb.ren.df %>%
 
 We observe a negative correlation between the family income of students and the percentage of first generation students. This tell sus that for the most popular Certificate degrees in the most poular states California, New York and Texas, first generation students have lower family income. 
 
-###Cheng
-### 7.1 Target variable 'CONTROL'
-We use a bar plot to compare numbers of observations for the target variable *CONTROL*
+##Cheng
+### DEBT_N, CUML_DEBT_N:
+positive linear correlation exists between variable DEBT_N(The number of students in the median debt completers cohort) and variable (Number of students in the cumulative loan debt cohort). A smooth line is drawn through the data points. We could fine that the smooth line is straight line, thus the positive liear correlation between these two varibles are pretty strong. 
 ```{r}
-csb.vars.df %>%
-  ggplot  (aes(x   =CONTROL)) +
-  geom_bar(aes(fill=CONTROL))
+csb.ren.df %>%
+  ggplot(aes(x=CUML_DEBT_N, y=DEBT_N)) + 
+  geom_line(aes(color='red')) + 
+  stat_smooth()
 ```
 
-From the plot above we can find that there are appriximately 2,000 Public insitituions. The number of Private colleges is nearly 5700.
-
-### 7.2 Target variable ~ independent variables
-We use box plot to compare distributions of each independent variable between two levels of target variable.
-### 7.2.1 "CONTROL"~"CDR3"
+### DEBT_N, CDR3_DENOM; 
+Similarity, we could find the positive linear correlation also exists between DEBT_N and CDR3_DENOM:
 ```{r}
-csb.vars.df %>%
-  ggplot(aes(x=CONTROL,
+csb.ren.df %>%
+  ggplot(aes(x=DEBT_N, y=CDR3_DENOM)) + 
+  geom_line(aes(color='red')) + 
+  stat_smooth()
+```
+
+### CUML_DEBT_N, CDR3_DENOM
+In the same way, the positive linear correlation also exists between CUML_DEBT_N and CDR3_DENOM:
+```{r}
+csb.ren.df %>%
+  ggplot(aes(x=CUML_DEBT_N, y=CDR3_DENOM)) + 
+  geom_line(aes(color='red')) + 
+  stat_smooth()
+```
+
+**Conclusion**: We could notice that inside of the variable group CUML_DEBT_N, CDR3_DENOM and DEBT_N, any two varibles have a  strong positive linear correlation.
+
+To evluate the perfomance of public and private institution, We use box-plot:  
+
+### "CONTROL"~"CDR3"
+```{r}
+csb.ren.df %>%
+  ggplot(aes(x=Type,
              y=CDR3)) + 
-  geom_boxplot(aes(fill=CONTROL)) +
+  geom_boxplot(aes(fill=Type)) +
     ylim(0, 0.6)
 ```
 
-### 7.2.2 "CONTROL"~"CDR3_DENOM"
-```{r}
-csb.vars.df %>%
-  ggplot(aes(x=CONTROL,
-             y=CDR3_DENOM)) + 
-  geom_boxplot(aes(fill=CONTROL)) +
-  ylim(0, 10000)
-```
+Because boxes overlap with both medians, no difference can be claimed. Namely we cannot tell if there is a difference in Three-year cohort default rate between public and private institutions.
 
 ### 7.2.3 "CONTROL"~"PCTPELL"
 ```{r}
-csb.vars.df %>%
-  ggplot(aes(x=CONTROL,
+csb.ren.df %>%
+  ggplot(aes(x=Type,
              y=PCTPELL)) + 
-  geom_boxplot(aes(fill=CONTROL))
+  geom_boxplot(aes(fill=Type))
 ```
 
-### 7.2.4 "CONTROL"~"PCTFLOAN"
+Because boxes overlap but not both medians, it is likely that the Percentage of undergraduates who receive a Pell Grant in public colleges is greater than the one of private insititues.
 ```{r}
-csb.vars.df %>%
-  ggplot(aes(x=CONTROL,
+csb.ren.df %>%
+  ggplot(aes(x=Type,
              y=PCTFLOAN)) + 
-  geom_boxplot(aes(fill=CONTROL))
+  geom_boxplot(aes(fill=Type))
 ```
+
+Because boxes overlap but not both medians, it is likely that the Percent of all federal undergraduate students receiving a federal student loan in public colleges is greater than the one of private insititues.
 
 ### 7.2.5 "CONTROL"~"DEBT_N"
 ```{r}
-csb.vars.df %>%
-  ggplot(aes(x=CONTROL,
+csb.ren.df %>%
+  ggplot(aes(x=Type,
              y=DEBT_N)) + 
-  geom_boxplot(aes(fill=CONTROL)) +
+  geom_boxplot(aes(fill=Type)) +
   ylim(0, 30000)
 ```
 
-### 7.2.6 "CONTROL"~"CUML_DEBT_N"
-```{r}
-csb.vars.df %>%
-  ggplot(aes(x=CONTROL,
-             y=CUML_DEBT_N)) + 
-  geom_boxplot(aes(fill=CONTROL)) +
-  ylim(0, 10000)
-```
-
-From all the box-plot above, we could conclude that the distribution of each variable are quite different for two levels of the target varible. We could draw the conclusion and achieve our initial goal based on our analysis output.
-
+Because boxes overlap with both medians, no difference can be claimed. Namely we cannot tell if there is a difference in The number of students in the median debt completers cohort between public and private institutions.
 
 ###Katie
 
 #Target variables~independent variables:
 Control~PCIP01:
 ```{r}
-csb.vars.df %>%
-  ggplot(aes(x=CONTROL,
+csb.ren.df %>%
+  ggplot(aes(x=Type,
              y=PCIP01)) + 
-  geom_boxplot(aes(fill=CONTROL)) +
+  geom_boxplot(aes(fill=Type)) +
   ylim(0, 0.6)
 ```
 The result indicates that the major percentage of taking argriculture degree is less than 0.1 percent in private school and less than 0.2 percent in public school. There are more outlier in private school. 
 ```{r}
-csb.vars.df %>%
-  ggplot(aes(x=CONTROL,
+csb.ren.df %>%
+  ggplot(aes(x=Type,
              y=PCIP03)) + 
-  geom_boxplot(aes(fill=CONTROL)) +
+  geom_boxplot(aes(fill=Type)) +
   ylim(0, 0.7)
 ```
 The result indicates that the majority percentage of taking natural resource degree is less than 0.15 percent in public school and less than 0.1 percent in private school.There are more outliers in private school than in public school.In some private school, the natural degree is awarded more than other private school and public school.
 ```{r}
-csb.vars.df %>%
-  ggplot(aes(x=CONTROL,
+csb.ren.df %>%
+  ggplot(aes(x=Type,
              y=PCIP04)) + 
-  geom_boxplot(aes(fill=CONTROL)) +
+  geom_boxplot(aes(fill=Type)) +
   ylim(0, 0.5)
 ```
 The result indicates that the majority percentage of taking Architecture degree is less than 0.07 percent in private and public school. Private school has higher Architecture degree pecentage than public school.There are more outliers in private school.
 ```{r}
-csb.vars.df %>%
-ggplot(aes(x=CONTROL,
+csb.ren.df %>%
+ggplot(aes(x=Type,
            y=PCIP05)) + 
-  geom_boxplot(aes(fill=CONTROL)) +
+  geom_boxplot(aes(fill=Type)) +
   ylim(0, 0.5)
 ```
 The result indicates that the majority percentage of Ethnic degree in private school is less than 0.1 percent while it is less than 0.05 in public school. There more higher percentage of Ethnic dergree awarded in public school because public school has more outliers.
 ```{r}
-csb.vars.df %>%
-  ggplot(aes(x=CONTROL,
+csb.ren.df %>%
+  ggplot(aes(x=Type,
              y=PCIP09)) + 
-  geom_boxplot(aes(fill=CONTROL)) +
+  geom_boxplot(aes(fill=Type)) +
   ylim(0, 0.6)
 ```
 The result indicates that majority of percentage of communication/juornal degree awarded is less than 0.025 in public school.Private school has more high percentage communication degress awarded and has more outliers.
 ```{r}
-csb.vars.df %>%
-  ggplot(aes(x=CONTROL,
+csb.ren.df %>%
+  ggplot(aes(x=Type,
              y=PCIP10)) + 
-  geom_boxplot(aes(fill=CONTROL)) +
+  geom_boxplot(aes(fill=Type)) +
   ylim(0, 0.5)
 ```
 The result indicates that the range of percentage of communication technology degree awarded in private school is larger than public school. Private school has higher percentage of communication technology degree awarded.The percentage of communication techonology degree awarded is more spread in private school than in public school. 
@@ -663,8 +667,8 @@ The result indicates that the range of percentage of communication technology de
 
 #Among variables
 ```{r}
-cor_matrix<-csb.vars.df %>%
-  group_by(CONTROL)%>%
+cor_matrix<-csb.ren.df %>%
+  group_by(Type)%>%
   do(as.data.frame(cor(.[,-1],method="spearman",use="pairwise.complete.obs")))
 cor_matrix1<- cor_matrix%>%
   data.frame(row=rep(colnames(.)[-1],n_groups(.)))
