@@ -696,7 +696,7 @@ cor_matrix1<- cor_matrix%>%
   data.frame(row=rep(colnames(.)[-1],n_groups(.)))
 cor_matrix1
 ```
-Among private school, PCIP03 and PCIP05 has some correlation, around 0.53.Among public school, PCIP05 and PCIP09 has some correlation around 0.46. 
+Among private school, PCIP03 and PCIP05 has some correlation, around 0.53.Among public school, PCIP05 and PCIP09 has some correlation around 0.46. The correlation of those two variables don't vary too much. Moreover, for both private and public school, variable CDR3_DENOM is highly correlated with CUML_DEBT_N (with 0.97 correlation coefficient) and DEBT_N(with 0.97 correlation coefficient). Family Income and PCTFLOAN is highly correlated as well in both private school and public school. Understanding the correlation among independent variables can help with selecting proper models in later steps. 
 
 ##Conclusion
 
