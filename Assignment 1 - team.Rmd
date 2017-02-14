@@ -3,7 +3,7 @@ title: "Assignment 1 - MA710 Bentley"
 output: html_document
 ---
 
-## Introduction
+## 1. Introduction
 
 The data we are working on is provided by the U.S department of Education. The dataset contains information of College Scorecard, federal financial aid and students'earning records. The data set can help to understand the information of getting federal financial ai and have insights on the school performance as well as students' long term development.The dataset contains 1743 variables which are organized into 10 categories. The categories cover a range of topics:
 
@@ -31,11 +31,11 @@ The data we are working on is provided by the U.S department of Education. The d
 Based on the information provided by the dataset,the descriptive analysis is performed. 
 
 
-##Goals
-"Private colleges vs. public colleges", there is a face-off that's been ongoing for many years. The major difference between public and private colleges lies in how they are funed. Public colleges are funded mostly by state governments, whereas private colleges rely heavily on private contributions, donations and tuition. The goal of our analysis is to compare public institutions and private colleges in terms of their "performance".  A college degree or postsecondary certificate is more important than ever. However, many students are not confident enough to making decision on the type of school they should choose. Our analysis aims at helping students understand the differences between public institutions and private colleges in terms of school size, school performance, tuition cost, degrees awarded, students' background and geographic information. The analysis should give potential students a brief overview of these two types of schools. 
+## 2.Goals
+"Private colleges vs. public colleges", there is a face-off that's been ongoing for many years. The major difference between public and private colleges lies in how they are funded. Public colleges are funded mostly by state governments, whereas private colleges rely heavily on private contributions, donations and tuition. The goal of our analysis is to compare public institutions and private colleges in terms of their "performance".  A college degree or postsecondary certificate is more important than ever. However, many students are not confident enough to making decision on the type of school they should choose. Our analysis aims at helping students understand the differences between public institutions and private colleges in terms of school size, school performance, tuition cost, degrees awarded, students' background and geographic information. The analysis should give potential students a brief overview of these two types of schools. 
 
 
-##DataSet Description
+## 3.DataSet Description
 
 There are 26 variables that we are interested in. The variables name,  type and descriptions are listed below. 
 
@@ -75,77 +75,85 @@ There are 26 variables that we are interested in. The variables name,  type and 
 
 
 
-##Objectives
-To better understand the differences between private colleges and public institutions, the descriptive statistical analysis is conducted. The detailed steps are describled as following:
+## 4.Objectives
+To better understand the differences between private colleges and public institutions, the descriptive statistical analysis is conducted. The detailed steps are described as follows:
+
 1. Import and prepare dataset. 
-This step imports dataset from local dictionary into R and read the file as csv file. All the necessary packages are installed in the R for later analysis and data visualization. Since we are interested in 26 variables, we select 26 variables from original dataset and create a new dataset for further analysis. The data manipulation is not implemented in the original dataset. 
+This step imports dataset from local directory into R and read the file as csv file. All the necessary packages are installed in the R for later analysis and data visualization. Since we are interested in 26 variables, we select 26 variables from original dataset and create a new dataset for further analysis. The data manipulation is not implemented in the original dataset. 
 
 2. Data preparation. 
-In this step, in the new dataset we created, missing values for each variables are ensured less than 20% of the total values; data type is transferred into the proper type for analyzing convenience; the target variable Type, Private or Public is code as 0 for private and 1 for public; some independent variables are renamed for interpretation purpose. This step cleans and prepares all the data for further analysis. Dplyr is widely used in this step. 
+In this step, we clean our dataset and modify variables. Missing values for each variable is computed to ensure that variables chosen have less than 20% missingvalues; data type is transferred into the proper type for analyzing convenience; the target variable Type, Private or Public is code as 0 for private and 1 for public; some independent variables are renamed for interpretation purpose. This step cleans and prepares all the data for further analysis. Dplyr is widely used in this step. 
 
 3. Data summary
-In this step, basic statistical analysis is conducted. The mean, median, and the variance is calculated for each numeric variables. This can help with the general understanding of the dataset. Dplyr is widely used in this step. 
+In this step, basic statistical analysis is conducted. The mean, median, and the variance is calculated for each numeric variable. This can help with the general understanding of the dataset. `dplyr` package is widely used in this step. 
 
 4. Relationship among variables
 In this step, the relationship between target variables and independent variables as well as the relationship among independent variables is analyzed. When it comes to the relationship among independent variables, the correlation among independent variables from the same category is tested as well as the correlation among independent variables cross different categories. This will help to get the insights on the difference between private colleges and public institutions. This step is crucial in achieving our goal. Ggplot is widely used in this step. 
 
 5. Conclusion
 This step summarizes the descriptive results for private colleges and public institutions. The descriptive analysis indicates the difference between private school and public school from perspectives such as students’ background, degree awarded, tuitions and stc. The result can help students understand private and public school better and help them make decision for their education goal. 
-##Data Preparation
 
-### 5.1 Libraries used
-#### 5.1.1 "dplyr" package
-We will load the *'dplyr'* package that contains functions for data manipulation using data frames. It allows us to order rows, select rows, select variables, modify variables and summarize variables. 
+## 5.Data Preparation
+
+### 5.1 Loading libraries
+
+We will load the `dplyr` package that contains functions for data manipulation using data frames. It allows us to order rows, select rows, select variables, modify variables and summarize variables. 
 ```{r}
 library(dplyr)
 ```
 
-#### 5.1.2 "ggplot2" package
-We will load the *"ggplot2"* package which is a powerful plotting system that creates elegant and complex plots in R.
+We will also load the `ggplot2` package which is a powerful plotting system that creates elegant and complex plots in R.
 ```{r}
 library(ggplot2)
 ```
-#### 5.1.3 "ggvis" package
-We will also use the graphics commands from the ggvis library.
-```{r}
-library(ggvis)
-```
-#### 5.1.4 "magrittr" package
-The magrittr library is loaded for the piping operator %>%.
+
+The `magrittr` library is loaded for the piping operator `%>%`.
 ```{r}
 library(magrittr)
 ```
 
-
+The `readr` library is loaded to read in the csv file.
 ```{r}
-# Read in the csv file using `read_csv` function
+library(readr)
+```
+
+### 5.2 Reading the datafile
+
+We read in the csv file `MERGED2014_15_PP.csv` into the dataframe `csb.df` using the `read_csv` function of the `readr` package.
+```{r}
 csb.df = read_csv(paste0('/Users/akhoury/Desktop/MA 710/Assignment-1/CollegeScorecard_Raw_Data/', 
                          'MERGED2014_15_PP.csv'))
 ```
+### 5.3 Data cleaning and variable modification
+
+For our analysis, we wish to include only those institutions which are currently operating. So we filter the rows to keep those which have `CURROPER` equal to 1.
 
 ```{r}
-# List the variable names from the dataset
-names(csb.df)
-```
-
-```{r}
-# Remove those institutions(rows) which are not currently operating
 csb.df %>%
   filter(CURROPER ==1) %>%
   {.} -> csbop.df
 ```
+The new dataframe `csbop.df` consists of only currently operating institutions.
+Based on our decision to select certain variables, we will use the `SELECT` command from `dply` package to create a smaller data frame which contains only the variables of interest.
 
 ```{r}
-# Look for variables to analyse and examine their class
 csbop.df %>%
-  select(CONTROL, ST_FIPS, FAMINC, FEMALE, MARRIED, 
-          DEP_STAT_PCT_IND, FIRST_GEN, PREDDEG ) %>%
+  select(CONTROL, ST_FIPS, FAMINC, FEMALE, MARRIED,DEP_STAT_PCT_IND, FIRST_GEN, PREDDEG, CDR3, CDR3_DENOM,
+         PCTPELL, PCTFLOAN, DEBT_N, CUML_DEBT_N, OPEID, HIGHDEG, REGION, NPT4_PRIV, NPT4_PUB, NUMBRANCH, CCBASIC,
+         PCIP01,PCIP03,PCIP04,PCIP05,PCIP09,PCIP10) %>%
   {.} -> csb.vars.df
+```
+The resuting dataframe `csb.vars.df` contains only the selected variables. Next we examine the structure of this new dataframe `csb.vars.df`.
+
+```{r}
 str(csb.vars.df)
 ```
 
+The output tells us that the dataframe `csb.vars.df` has 6893 observations and 27 variables. It also displays the class of these variables.We can see that some of the variables do no belong to the correct class. For instance, `CONTROL`(Type of institution - Public or Private) should be a factor variable, but it is an integer in the dataframe. Similarly FEMALE (Percentage of female students) should be an integer, and not a character variable.
+
+To convert the class of these variables to the desired class, we use the functions `as.numeric` and `as.factor`, which convert the class variables to `numeric` and `factor` repectively.The code below uses the `MUTATE` command from the `dplyr` library to alter variables of the input data frame `csb.vars.df` and returns the modified data frame `csb.class.df`. 
+
 ```{r}
-# Change the class of certain variables as needed
 csb.vars.df %>% 
   mutate(FAMINC  = as.numeric(FAMINC),
          FEMALE = as.numeric(FEMALE), 
@@ -154,17 +162,83 @@ csb.vars.df %>%
          FIRST_GEN = as.numeric(FIRST_GEN),
          CONTROL    = as.factor(CONTROL),
          ST_FIPS = as.factor(ST_FIPS),
-         PREDDEG = as.factor(PREDDEG)) %>%
+         PREDDEG = as.factor(PREDDEG),
+         CDR3 = as.numeric(CDR3), 
+         CDR3_DENOM  = as.numeric(CDR3_DENOM),
+         PCTPELL = as.numeric(PCTPELL),
+         PCTFLOAN = as.numeric(PCTFLOAN),
+         DEBT_N = as.numeric(DEBT_N),
+         CUML_DEBT_N = as.numeric(CUML_DEBT_N),
+         OPEID = as.numeric(OPEID),
+         NPT4_PRIV = as.numeric(NPT4_PRIV), 
+         NPT4_PUB  = as.numeric(NPT4_PUB),
+         PCIP01=as.numeric(PCIP01),
+         PCIP03=as.numeric(PCIP03),
+         PCIP04=as.numeric(PCIP04),
+         PCIP05=as.numeric(PCIP05),
+         PCIP09=as.numeric(PCIP09),
+         PCIP10=as.numeric(PCIP10)) %>%
          {.} -> csb.class.df
 ```
 
+The next step is to check for the percentage of NA (missing) values for the above range of variables. This is accomplished by first adding the number of NA values for each variable, dividing it by the `length` of the variable(total number of observations) and multiplying by 100 to convert it into percentage. Since we would like to apply this function to a range of variables, we use `summarise_at` command. `summarise_at` takes the set of columns to be summarised as the first parameter which in our case wold be all columns and the function to be applied to them as the second parameter.
+
+```{r}
+csb.class.df %>% 
+  summarise_at(.cols = vars(),
+               .funs = function(x) sum(is.na(x))/length(x))*100
+```
+
+We can observe from the output that `FAMINC` has 4.16% missing values, `MARRIED` has 15.32% missing values and so on. Then we decide to include only those variables which have less than 20% missing values. This is done by using the `SELECT` command.
+
+```{r}
+# Select those variables with less than 20% missing values 
+csb.class.df %>%
+  select(CONTROL, ST_FIPS, FAMINC, FEMALE, MARRIED,DEP_STAT_PCT_IND, FIRST_GEN, PREDDEG, 
+         OPEID, HIGHDEG, REGION, NPT4_PRIV, NPT4_PUB, NUMBRANCH, CCBASIC, CDR3, CDR3_DENOM, PCTPELL, 
+         PCTFLOAN, DEBT_N, CUML_DEBT_N, PCIP01,PCIP03,PCIP04,PCIP05,PCIP09,PCIP10 ) %>% 
+         {.} -> csb.var.df
+```
+
+The selected variables are then put into a new dataframe `csb.var.df`. 
+
+Since the goal of our project is to compare public and private institutions, we want to combine the two types of private institutions : private for-profit and private non-profit into one group called private institutions. We use the `ifelse` command to achieve this by assigning level 0 ( private) to those institutions with a value of 2 (private for-profit) or 3(private non-profit) and level 1 to public institutions. 
+
+```{r}
+
+csb.var.df %>%
+  mutate(CONTROL = ifelse((CONTROL==2|CONTROL==3),0,1)) %>%
+  mutate(CONTROL    = as.factor(CONTROL)) %>%
+  {.} ->csb.new.df
+```
+
+The dataframe `csb.new.df` now contains the mutated variable `CONTROL` with only two levels - 0 for private institutions and 1 for public institutions.
+
+The variables `NTP4_PRIV` and `NTP4_PUB` describes the average net price of either Public or Private colleges, and are complementing each other. For that reason, we will built a new variable `NPT4` which describes the average net price for both public and private colleges.
+
+To do this, we first define a function `replace_na_values` which takes the variable as the input and by looping over th entire length of the variable, replaces each NA values by 0.  We call this function on our two variables `NPT4_PRIV` and `NPT4_PUB`. Then we create a new variable `NPT4` by adding the two variables `NPT4_PRIV` and `NPT4_PUB` using the `MUTATE` command.
+
+```{r, cache=TRUE}
+  replace_na_values <- function (variable){
+    for (i in 1:length(variable)){
+      if (is.na(variable[i])){
+        variable[i] = 0
+      }
+    }
+    return (variable)
+  }
+
+csb.new.df %>% 
+  mutate(NPT4 = replace_na_values(NPT4_PRIV) + replace_na_values(NPT4_PUB)) %>%
+  {.} -> csb.new.df
+```
+Since the names of these variables are not easy to understand, we rename them using the `rename` function of the `dplyr` package.
 
 ```{r}
 # Rename the chosen variables
 csb.new.df %>%
   rename(Type = CONTROL,
          State = ST_FIPS,
-         Distance = DISTANCEONLY,
          Family_Inc = FAMINC,
          Female = FEMALE,
          Married = MARRIED,
@@ -174,58 +248,11 @@ csb.new.df %>%
          {.} -> csb.ren.df
 ```
 
+## 6.Variable Summaries
 
-We can see that the selected variables are mostly without missing values. The exception is CCBASIC which has 421 missing values or the equivalent of 5.46% from the data. Since this is an important variable for us and considering the fact approximately 5% are msising values, we will use the CCBASIC variabe for our analysis.
+### 6.1 Degree and type
 
-##Variable Summaries
-
-```{r}
-# Check for the percentage of NA (missing) values for the above range of variables
-csb.class.df %>% 
-  summarise_at(.cols = vars(),
-               .funs = function(x) sum(is.na(x))/length(x))*100
-```
-
-```{r}
-# Select those variables with less than 20% missing values 
-csb.class.df %>%
-  select(CONTROL, ST_FIPS, DISTANCEONLY, FAMINC, FEMALE, MARRIED, 
-         DEP_STAT_PCT_IND, FIRST_GEN, PREDDEG ) %>% 
-         {.} -> csb.var.df
-```
-
-```{r}
-# Combine private for-profit and private non-profit levels in the Type variable. Type = 1 for public,
-# Type = 0 for Private
-csb.var.df %>%
-  mutate(CONTROL = ifelse((CONTROL==2|CONTROL==3),0,1)) %>%
-  mutate(CONTROL    = as.factor(CONTROL)) %>%
-  {.} ->csb.new.df
-```
-
-
-
-###Sev
-We will use some graphs in order to explore further the variables and the relationship between them. Since we are considering the variables through the Public vs Private category, when exploring the variables we will use different colors to emphasize the differences which come with Private vs Public colleges.
-
-(all of my part is moved into the next section; I did some summary of the data but that's basically the same as the rest of the team)
-
-### Neha
-## 5.1 Family Income, Female, Married, Percentage of financially independent student and Percentage of first generation students
-
-The summary statistics for all the numeric variables were obtained using the `summarise_if` function. This function was used in combination with `is.numeric` to summarise only those variables which were numeric. We also grouped these variables by their `Type` which is Public or Private, beofre summarising.The descriptive measures chosen were mean, median and variance. The `options` command was used to set the column width to infinity inorder to see all the columns.The code used was : 
-```{r}
-options(dplyr.width=Inf)
-csb.ren.df %>% 
-  group_by (Type) %>%
-  summarise_if(is.numeric, funs(mean, median, var), na.rm=TRUE)
-print(Rail)
-```
-We can observe how these measures vary considerably for public and private institutions.Though the average family income for both type of institutions is roughly similar, the median family income for Public insitutions ($ 31,000) is ~$3,000 more than that of Private institutions. This is an interesting finding as private institutions being more expensive, should be expected to be attended by students coming from the higher income bracket. It can also be seen that private insitutions have a larger share of female students, married students, financially independent and first-generation students.
-
-## 5.2 Degree and type
-
-The following code is used to summarise the factor variables usig aggregates. We first group the institutions by their type and count the total number of institutions providing predominantly Certficate, Associate, Bachelor and Graduate degrees. The code used is:
+The following code is used to summarise the factor variable `Degree` using aggregates. We first group the institutions by their type and count the total number of institutions providing predominantly Certficate, Associate, Bachelor and Graduate degrees. The code used is:
 ```{r}
 csb.ren.df %>% 
   group_by(Type) %>%
@@ -234,42 +261,52 @@ csb.ren.df %>%
             Bachelor=sum(Degree==3),
             Graduate=sum(Degree==4))
 ```
-The output tells us that there are 2904 institutions providing predominantly Certificate degree, 1298 institutions with Bachelor and 285 Graduate degree institutions.
 
-###Cheng
+The output tells us that there are 2302 private institutions providing predominantly Certificate degree, 532 private institutions providing predominantly Associate degree, 1469 private institutions providing predominantly Bachelor degree and 269 private institutions providing predominantly Graduate degree.
 
-To get a better understanding of our variables, we could adopt descriptive analysis to summary independent varibles. Furthermore, we could generate summary statistics respectively for two different categories of our target varivble- CONTROL:
+Similarly the figures for public institutions are 602 providing predominantly Certificate degree, 766 providing predominantly Associate degree, 590 providing predominantly Bachelor degree and 16 private institutions providing predominantly Graduate degree. The largest share (2302 insitutions) is that of private institutions providing predominantly Certificate degree.
+
+### 6.2 Student demographics variables
+
+The summary statistics for all the numeric variables were obtained using the `summarise_if` function. This function was used in combination with `is.numeric` to summarise only those variables which were numeric. We also grouped these variables by their `Type` which is Public or Private, beofre summarising.The descriptive measures chosen were mean, median and variance. The `options` command was used to set the column width to infinity inorder to see all the columns.
+
 ```{r}
 options(dplyr.width=Inf)
-csb.vars.df %>% 
-  group_by (CONTROL) %>%
+csb.ren.df %>% 
+  select(Type, State, Family_Inc, Female, Married, Ind_Per, First_Gen) %>%
+  group_by (Type) %>%
+  summarise_if(is.numeric, funs(mean, median), na.rm=TRUE)
+```
+
+We can observe how these measures vary considerably for public and private institutions.Though the average family income for both type of institutions is roughly similar, the median family income for Public insitutions ($ 31,000) is ~$3,000 more than that of Private institutions ($28,000). This is an interesting finding as private institutions being more expensive, should be expected to be attended by students coming from the higher income bracket. It can also be seen that private insitutions have a larger average share of female students, married students, financially independent and first-generation students.
+
+### 6.3 Aid variables
+
+The code below is used to summarise the variables related to aid in the dataset. These variables are Percentage of undergraduates who receive a Pell Grant, percent of all federal undergraduate students receiving a federal student loan, three-year cohort default rate, number of students in the cohort for the three-year cohort default rate, number of students in the median debt completers cohort and number of students in the cumulative loan debt cohort.
+
+```{r}
+options(dplyr.width=Inf)
+csb.ren.df %>% 
+  select(Type, CDR3, CDR3_DENOM, PCTPELL, PCTFLOAN, DEBT_N, CUML_DEBT_N) %>%
+  group_by (Type) %>%
   summarise_if(is.numeric, funs(mean, median, var), na.rm=TRUE)
 ```
 
-From the output, we could summarise that in terms of mean value:
+From the output, we could summarise that private institutions have a much higher mean and median value for the percentage of undergraduates who receive a Pell Grant, who receive a Federal loan, and number of students in the cumulative loan debt cohort.
 
+In terms of variance, variables denoting percentage of undergraduates who receive a Pell Grant, nhe number of students in the median debt completers cohort, number of students in the cumulative loan debt cohort and mumber of students in the cohort for the three-year cohort default rate are higher for Private insitituions.
 
-for variables *PCTPELL*, *PCTFLOAN*, *DEBT_N*, *CUML_DEBT_N*, public institutions(CONTROL=1) are much higher than Private insitituions.
+Thus we can see that the summary statistics reveals that considerable difference exists between Public and Private institutions.
 
-for variables *CDR3*, *CDR3_DENOM*, public institutions(CONTROL=1) are much lower than Private insitituions.
+### 6.4 Academics variables
 
+Finally we summarised the variables in the academics category.The variables chosen were the percentage of degrees awarded in 
+1) Agriculture , Agriculture Operations, And Related Sciences 
+2) Natural Resources And Conservation
+3) Architecture And Related Services 
+4) Area, Ethnic, Cultural, Gender, And Group Studies 
+5) Communication, Journalism, And Related Programs.
 
-In terms of median value:
-
-for variables *PCTPELL*, *PCTFLOAN*, *CUML_DEBT_N*, public institutions(CONTROL=1) are higher than Private insitituions.
-
-for variables *DEBT_N*, *CDR3*, *CDR3_DENOM*, public institutions(CONTROL=1) are lower than Private insitituions.
-
-
-In terms of variance:
-
-for variables *PCTPELL*, , *CUML_DEBT_N*, *DEBT_N*, *CDR3*, *CDR3_DENOM*, public institutions(CONTROL=1) are higher than Private insitituions.
-
-for variable *PCTFLOAN* public institutions(CONTROL=1) are slightly lower than Private insitituions.
-
-In conclusion, the summary statistics reveals that considerably differnece exists between two catories of target varible. 
-
-###Katie
 ```{r}
 options(dplyr.width=Inf)
 csb.vars.df %>% 
@@ -279,10 +316,7 @@ csb.vars.df %>%
 The result indicated that the averages of the percentage of awarded degree in those 6 fields are less than 1% .Among those 6 awarded degree, the mean of the PCIP09 is the largest regardless of the contorl type.This result indicates that among those 6 variables, percentages of degrees awarded in Communication are awarded more than otehr degree.The variance of those 6 variables are relatively samll, which means that from 2014 to 2015,the percentage of those 6 awarded degrees are almost the same in general. It does not vary to much in different institutes.PCIP01,PCIP03,PCIP05,PCIP09 degrees are awared more in public school than privated school. 
 
 
-
-
-
-##Variable relationship
+## 7.Variable relationship
 
 ###Sev
 In this section we will focus on comparing the Public vs Private colleges based on some basic characteristics such as location by region, level of degrees offered, number of campuses etc.
