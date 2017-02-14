@@ -121,7 +121,7 @@ library(readr)
 
 We read in the csv file `MERGED2014_15_PP.csv` into the dataframe `csb.df` using the `read_csv` function of the `readr` package.
 ```{r}
-csb.df = read_csv(paste0('C:/Users/Chengdong Liang/Desktop/MA 710/Assignment 1/CollegeScorecard_Raw_Data/', 'MERGED2014_15_PP.csv'))
+csb.df = read_csv(paste0('C:/Users/sevda/Documents/Bentley/710/Assignment 1/CollegeScorecard_Raw_Data/CollegeScorecard_Raw_Data/',  'MERGED2014_15_PP.csv'))
 
 ```
 ### 5.3 Data cleaning and variable modification
@@ -322,7 +322,9 @@ The result indicated that the averages of the percentage of awarded degree in th
 ## 7.Variable relationship
 
 ###Sev
-In this section we will focus on comparing the Public vs Private colleges based on some basic characteristics such as location by region, level of degrees offered, number of campuses etc.
+In this section we will focus on comparing the Public vs Private colleges based on a number of characteristics that describes the colleges such as the cost of attendance, income level of students, loan information and repayment rates,gender, degrees.
+
+First we will look at the total number of Public and Private colleges.
 
 ```{r, cache=TRUE}
 
@@ -344,7 +346,7 @@ csb.ren.df %>%
   geom_bar(aes(fill= as.factor(Type)))
 ```
 
-Based on the graph, we can see that the colleges are not equally distributed among regions. Some regions such as numbers 2(Mid East),3(Great Lakes) and 5(Southeast) have much  larger amount of colleges compared to 7(Rocky Mountains) and 9(Outlying areas). In addition the ratio of the Public vs Private colleges changes between regions.
+Based on the graph, we can observe that the colleges are not equally distributed among regions. Some regions such as numbers 2(Mid East),3(Great Lakes) and 5(Southeast) have much  larger amount of colleges compared to 7(Rocky Mountains) and 9(Outlying areas). In addition the ratio of the Public vs Private colleges changes between regions.Regions such as 9(outlying areas) has relatively high Private vs Public ratio while other regions such as 5(Southeast) have more balanced representation of both Public and Private colleges.
 
 The variable CCBASIC describes the Carnegie classification of colleges. There are 33 different type of colleges ranging between Associate's college and Doctoral Universities. We will explore the distribution of colleges based on the CCBASIC values.
 
@@ -358,55 +360,53 @@ csb.ren.df %>%
             position='dodge')
 
 ```
-From the plot, we can see that some categories are stronger represented. A significant amount fo the values belong to category (-2) which means that the classification is not applicable. In addition we can see that Public colleges are represented better in some categories(1,2,3,4,5) while private colleges are strongly represented in other categories such as 21,22,23. In order to be able to explore the graph in more details, we will remove the nor classified colleges and will split the rest of the data in two parts - csategories which are strognly represented by Public colleges and these which are strongly represented by Private colleges.
+From the plot, we can see that some categories are stronger represented. A significant amount of the values belong to category (-2) which means that the classification is not applicable. In addition we can see that Public colleges are represented better in some categories(1,2,3,4,5) while private colleges are strongly represented in other categories such as 21,22,23. In order to be able to explore the graph in more details, we will remove the not classified colleges and will split the rest of the data in two parts - categories which are strongly represented by Public colleges and these which are strongly represented by Private colleges. In order to achieve the subsetting we will use the filter function from the dplyr package.
 
 
 ```{r, cache=TRUE}
 csb.ren.df %>% 
   filter(CCBASIC %in% c(1:9, 14:18)) %>%
-  {.} -> merged2014.vars.pub.ccbasic.df
+  {.} -> csb.ren.pub.ccbasic.df
 
 csb.ren.df %>% 
   filter(CCBASIC %in% c(10:13, 19:33)) %>%
-  {.} -> merged2014.vars.priv.ccbasic.df
+  {.} -> csb.ren.priv.ccbasic.df
 
-merged2014.vars.pub.ccbasic.df %>%
+csb.ren.pub.ccbasic.df %>%
   ggplot(aes(x=as.factor(CCBASIC))) +
   geom_bar(aes(fill= as.factor(Type)),
             position='dodge')
 
-merged2014.vars.priv.ccbasic.df %>%
+csb.ren.priv.ccbasic.df %>%
   ggplot(aes(x=as.factor(CCBASIC))) +
   geom_bar(aes(fill= as.factor(Type)),
             position='dodge')
 
 ```
 
-From the new plots, we can see that 9 (Associate's Colleges: High Vocational & Technical-High Nontraditional) and  14(Baccalaureate/Associate's Colleges: Associate's Dominant) are with almost equal numbers of Public and Private colleges. The rest of the categories are strognly dominated by one type or another. It's interesting to see that most Associates' colleges are mostly Public with very few Private options. On the other hand the Special focus Two-Years and the Baccalaureatte colleges are mostly Private ones.
+Based onthe output, we can see that 9 (Associate's Colleges: High Vocational & Technical-High Nontraditional) and  14(Baccalaureate/Associate's Colleges: Associate's Dominant) are with almost equal numbers of Public and Private colleges. The rest of the categories are strongly dominated by one type or another. It's interesting to see that the majority of the Associates' colleges are mostly Public with very few Private options. On the other hand the Special focus Two-Years and the Baccalaureatte colleges are mostly Private ones.
 
 The next variable to explore is the Number of Branches. Again we will see the distribution colored based on the Public vs Private options.
 
 ```{r}
-#College count by NUMBRANCH colored by Public vs Private
-#
 csb.ren.df %>%
   ggplot(aes(x=as.factor(NUMBRANCH))) +
   geom_bar(aes(fill= as.factor(Type)),
             position='dodge')
 ```
 
-From the graph, it is visible that the Private colleges are the ones that offer more branches. The Public colleges rarely has more than 6 branches. The majority of the colleges are with only one branch.
+From the graph, it is visible that the Private colleges are the ones that offer more branches. The Public colleges rarely have more than 6 branches. The majority of the colleges are with only one branch.
 
-The next variable in our exploratory analysis is the HIGHDEG. It describes the highest degree awarded at the college. 
+The next variable in our exploratory analysis is the HIGHDEG. It describes the highest degree awarded at the college. There are 5 levels of degree described through the variable (0 - non-degree-granting, 1 - Certificate degree, 2 - Associate degree, 4 - Graduate degree).
 
 ```{r, cache=TRUE}
-merged2014.vars.df %>%
+csb.ren.df %>%
   ggplot(aes(x=as.factor(HIGHDEG))) +
-  geom_bar(aes(fill= as.factor(CONTROL)),
+  geom_bar(aes(fill= as.factor(Type)),
             position='dodge')
 ```
 
-From the graph we can see that categories 0 (no degree), 1(Certificate) and 3(Bachelors) are very strognly represented by Private colleges. The Public colleges are stronger is giving Associate degrees and Gradyate degrees.
+From the graph we can see that categories 0 (no degree), 1(Certificate) and 3(Bachelors) are very strongly represented by Private colleges. The Public colleges are stronger in giving Associate degrees and Graduate degrees.
 
 The last variable to explore is the Tuiton(NPT4).
 
@@ -422,9 +422,7 @@ csb.ren.df %>%
 
 Based on the box plots, we can see that the Private colleges(on the left) are more expensive compared to Public with some very expensive private colleges presented as outliers on the plot. The median of the tuiton for Public colleges is also lower than the median of the tuiton for Private colleges. The cheaper Private colleges are with comparable tuiton to the most expensive Public colleges.
 
-The next step is to explore some variable relationships.
-
-The first relationship to focus on is whether there is a strong relationship between the tuiton and the number of branches.
+Another variable relationship to focus on is whether there is a strong relationship between the tuiton and the number of branches.
 
 ```{r}
 #NPT4 by Number of branches
@@ -453,7 +451,6 @@ The graph represents the tuiton by region and by Public vs Private colleges. We 
 The next comparison is between the Classification and the Tuiton. We are exploring whether the tuiton varies by the type of college.
 
 ```{r}
-#NPT by CCASIC and by Public
 csb.ren.df %>%
   ggplot(aes(x=CCBASIC, y=NPT4)) +
   geom_point(aes(color=Type))
@@ -466,7 +463,6 @@ It is also interesting to explore whether some regions tend to have colleges wit
 
 
 ```{r}
-#NUMBRANCH by REGION and by 
 csb.ren.df %>%
   ggplot(aes(x=as.factor(REGION), y=NUMBRANCH)) +
   geom_point(aes(color=Type))
@@ -476,9 +472,8 @@ csb.ren.df %>%
 From the graph, we can see that the number of branches are approximately equally distributed between the regions. Region 1(New England) and Region 9 (Outlying areas) have colleges which are in general with slightly less number of branches. That could be explained by the geographical size of the resions. If the region is larger then it would make sense for the college to expand the number of branches in order to cover larger students' population.
 
 ###Neha
-## 6.1 Financially Independent, First Generation and Family Income
 
-In order to visualise the relationship between the three numeric variables, family income, precentage of students who are financially independent and the percentage of first generation students, we use a tile graph. The x-axis represents the Financially independent students in percentage while the y-axis shows the percentage of first generation students. The color of the tile depicts the family income of students, white tiles for the low values and red for the high values of family income. The code used is :
+As a next variable relationship in our analysis, we will focus on financial independnce, first generation and family income. In order to visualise the relationship between the three numeric variables, family income, precentage of students who are financially independent and the percentage of first generation students, we use a tile graph. The x-axis represents the Financially independent students in percentage while the y-axis shows the percentage of first generation students. The color of the tile depicts the family income of students, white tiles for the low values and red for the high values of family income. The code used is :
 ```{r}
 csb.ren.df %>%
   ggplot +
@@ -491,7 +486,6 @@ csb.ren.df %>%
 ```
 It can be observed from the graph that the there is a strong positive correlation between first generation students and financially independent students. This implies that institutes that have a higher share of first generation students also seem to have a higher share of financially independent students. Another observation is that the red tiles are at the lower end of both axes, indicating that institutes with students coming from a background of higher family income tend to have lower percentage of both first generation and financially independent students. 
 
-## 6.2 Family Income, Degree and Type
 
 We now try to analyse the relationsip between family income of students, degree provided by institutons and the type of the insitution.Since it involved one numeric and two factor variables, we use a heat map.The x-axis represents the type, the y-axis denotes the degree and the color of the boxes stands for the average family income of students.The code used is:
 
@@ -503,9 +497,8 @@ csb.ren.df %>%
   geom_tile(aes(fill=avg.inc)) 
 ```
 
-This output clearly depics that institutes with students having the highest average famnily income predominantly award Bachelors degree (Degree = 3). This is true for both public and private institutions. On the other hand, institutes that award Certificate degrees have students with the lowest family income. This could partly be explained by the high cost of the 4-year Bachelors program.
+This output clearly depics that institutes with students having the highest average family income predominantly award Bachelors degree (Degree = 3). This is true for both public and private institutions. On the other hand, institutes that award Certificate degrees have students with the lowest family income. This could partly be explained by the high cost of the 4-year Bachelors program.
 
-## 6.3
 
 The code below is used to count the number of colleges in each state and arrange them from highest to lowest.
 ```{r}
@@ -537,11 +530,11 @@ csb.ren.df %>%
   guides(size=FALSE)
 ```
 
-We observe a negative correlation between the family income of students and the percentage of first generation students. This tell sus that for the most popular Certificate degrees in the most poular states California, New York and Texas, first generation students have lower family income. 
+We observe a negative correlation between the family income of students and the percentage of first generation students. This tell us that for the most popular Certificate degrees in the most poular states California, New York and Texas, first generation students have lower family income. 
 
 ##Cheng
 ### DEBT_N, CUML_DEBT_N:
-positive linear correlation exists between variable DEBT_N(The number of students in the median debt completers cohort) and variable (Number of students in the cumulative loan debt cohort). A smooth line is drawn through the data points. We could fine that the smooth line is straight line, thus the positive liear correlation between these two varibles are pretty strong. 
+Positive linear correlation exists between variable DEBT_N(The number of students in the median debt completers cohort) and variable (Number of students in the cumulative loan debt cohort). A smooth line is drawn through the data points. We could fine that the smooth line is straight line, thus the positive liear correlation between these two varibles are pretty strong. 
 ```{r}
 csb.ren.df %>%
   ggplot(aes(x=CUML_DEBT_N, y=DEBT_N)) + 
@@ -590,7 +583,7 @@ csb.ren.df %>%
   geom_boxplot(aes(fill=Type))
 ```
 
-Because boxes overlap but not both medians, it is likely that the Percentage of undergraduates who receive a Pell Grant in public colleges is greater than the one of private insititues.
+Because boxes overlap but not both medians, it is likely that the Percentage of undergraduates who receive a Pell Grant in private colleges is greater than the one of public insititues.
 ```{r}
 csb.ren.df %>%
   ggplot(aes(x=Type,
@@ -598,7 +591,7 @@ csb.ren.df %>%
   geom_boxplot(aes(fill=Type))
 ```
 
-Because boxes overlap but not both medians, it is likely that the Percent of all federal undergraduate students receiving a federal student loan in public colleges is greater than the one of private insititues.
+Because boxes overlap but not both medians, it is likely that the Percent of all federal undergraduate students receiving a federal student loan in private colleges is greater than the one of public insititues.
 
 ### "CONTROL"~"DEBT_N"
 ```{r}
@@ -669,7 +662,7 @@ The result indicates that the range of percentage of communication technology de
 ```{r}
 cor_matrix<-csb.ren.df %>%
   group_by(Type)%>%
-  do(as.data.frame(cor(.[,-1],method="spearman",use="pairwise.complete.obs")))
+  do(as.data.frame(cor(.,method="spearman",use="pairwise.complete.obs")))
 cor_matrix1<- cor_matrix%>%
   data.frame(row=rep(colnames(.)[-1],n_groups(.)))
 cor_matrix1
@@ -678,6 +671,6 @@ Among private school, PCIP03 and PCIP05 has some correlation, around 0.53.Among 
 
 ##Conclusion
 
+Based on the exploratory analysis of the selected variables, we can say that there are some clear distinctions between Public and Private colleges. Public and Private colleges tends to offer different types of degrees among each based on the Carnegie Classification. Additionally, the degree concentration varies between the two types of colleges with higher number of Architectural and Communication technologies degrees offered at Private colleges compared to Public colleges and at the same time higher number of Ethic and Agricultural degrees offered at Public Colleges. The tuiton is another major difference between Public and Private with higher tuiton at Private colleges where we can also observe an extreme outliers indicating very expensive Private institutions. The tuiton of the college doesn't affect the income level of the attending students with some very low income students attending Private schools and at the same time very high income students preferring to enroll at Public colleges. This could be explained by the higher level of federal and Pell grants which are given to students attending Private schools. Even though the private schools are more expensive compared to the Public colleges, students from lower-income households receive a variety of grants which allow them to afford the expensive tuitons. The income level does affect the degree that the students are enrolled in. Our analysis indicates that students with the highest income prefer strongly Bachelor degrees while students with lower income are usually enrolled at Associate degrees or Certificate programs which could be explained by the significantly higher costs for Bachelor degrees comapred to the rest.Private and Public colleges are also not spread out evenly in different regions of the country. That may be explained by the differences in the income levels and differences in the type of education needed in different parts of the country.
 
-
-
+Overall we can conclude that Private and Public colleges complement each other. They serve different needs of the population in terms of type of degrees and concentration offered as well as more affordability which comes as lower tuiton for the Public colleges and more grants available for Private colleges.
