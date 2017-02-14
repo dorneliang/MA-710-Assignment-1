@@ -7,25 +7,25 @@ output: html_document
 
 The data we are working on is provided by the U.S department of Education. The data set contains information of College Scorecard, federal financial aid and students' earning records. The data set can help to understand the information of getting federal financial and have insights on the school performance as well as students' long term development. The data set contains 1743 variables which are organized into 10 categories. The categories cover a range of topics:
 
-*Root - basic information such as School Id and location.
+ * Root - basic information such as School Id and location.
 
-*School - basic descriptive information such as degree types, number of branches, Carnegie classification, Public or Private etc.
+ * School - basic descriptive information such as degree types, number of branches, Carnegie classification, Public or Private etc.
 
-*Academics - types of academics available at the school.
+ * Academics - types of academics available at the school.
 
-*Admissions - admission statistics such as acceptance rate and SAT/ACT scores.
+ * Admissions - admission statistics such as acceptance rate and SAT/ACT scores.
 
-*Student - descriptions of the students including the number of undergraduate students, part-time or full-time students, share of first generation students.
+ * Student - descriptions of the students including the number of undergraduate students, part-time or full-time students, share of first generation students.
 
-*Cost - information  cost for students such as average cost of attendance, tuition and fees, and average net price for institutions by income level.
+ * Cost - information  cost for students such as average cost of attendance, tuition and fees, and average net price for institutions by income level.
 
-*Aid - the amount of debt a student can take on while attending the college, typical monthly loan payments, and the percentage of Pell Grant Recipients.
+ * Aid - the amount of debt a student can take on while attending the college, typical monthly loan payments, and the percentage of Pell Grant Recipients.
 
-*Repayment - descriptions of how successful students are at repaying their debts which is measured by cohort default rate and repayment rate.
+ * Repayment - descriptions of how successful students are at repaying their debts which is measured by cohort default rate and repayment rate.
 
-*Completion - information on the completion and retention rates for first time and full time students.
+ * Completion - information on the completion and retention rates for first time and full time students.
 
-*Earnings - statistics on average and median earnings as well as share of former students' earning more than $25,000. 
+ * Earnings - statistics on average and median earnings as well as share of former students' earning more than $25,000. 
 
 
 Based on the information provided by the data set,the descriptive analysis is performed. 
