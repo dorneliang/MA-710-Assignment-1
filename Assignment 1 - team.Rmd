@@ -249,6 +249,7 @@ csb.new.df %>%
          Degree = PREDDEG) %>%
          {.} -> csb.ren.df
 ```
+The dataframe `csb.ren.df` contains our final set of variables, ready for further analysis.
 
 ## 6.Variable Summaries
 
