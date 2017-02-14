@@ -5,7 +5,7 @@ output: html_document
 
 ## 1. Introduction
 
-The data we are working on is provided by the U.S department of Education. The data set contains information of College Scorecard, federal financial aid and students'earning records. The data set can help to understand the information of getting federal financial and have insights on the school performance as well as students' long term development.The data set contains 1743 variables which are organized into 10 categories. The categories cover a range of topics:
+The data we are working on is provided by the U.S department of Education. The data set contains information of College Scorecard, federal financial aid and students' earning records. The data set can help to understand the information of getting federal financial and have insights on the school performance as well as students' long term development. The data set contains 1743 variables which are organized into 10 categories. The categories cover a range of topics:
 
 *Root - basic information such as School Id and location.
 
@@ -32,7 +32,7 @@ Based on the information provided by the data set,the descriptive analysis is pe
 
 
 ## 2.Goals
-"Private colleges vs. public colleges", there is a face-off that's been ongoing for many years. The major difference between public and private colleges lies in how they are funded. Public colleges are funded mostly by state governments, whereas private colleges rely heavily on private contributions, donations and tuition. The goal of our analysis is to compare public institutions and private colleges in terms of their "performance".  A college degree or post-secondary certificate is more important than ever. However, many students are not confident enough to making decision on the type of school they should choose. Our analysis aims at helping students understand the differences between public institutions and private colleges in terms of school size, school performance, tuition cost, degrees awarded, students' background and geographic information. The analysis should give potential students a brief overview of these two types of schools. 
+"Private colleges vs. public colleges". There is a face-off that is been ongoing for many years. The major difference between public and private colleges lies in how they are funded. Public colleges are funded mostly by state governments, whereas private colleges rely heavily on private contributions, donations and tuition. The goal of our analysis is to compare public institutions and private colleges in terms of their "performance".  A college degree or post-secondary certificate is more important than ever. However, many students are not confident enough to making decision on the type of school they should choose. Our analysis aims at helping students understand the differences between public institutions and private colleges in terms of school size, school performance, tuition cost, degrees awarded, students' background and geographic information. The analysis should give potential students a brief overview of these two types of schools. 
 
 
 ## 3.DataSet Description
@@ -46,49 +46,41 @@ There are 26 variables that we are interested in. The variables name,  type and 
 
 |Variables        |Type     |Descriptions|
 |-----------------|---------|-------------------------------
-|Type             |FACTOR   |Public or Private Institution|
-|State            |FACTOR   |State|
-|Family_Inc       |FLOAT    |Average family income in real 2015 dollars|
-|Female           |FLOAT    |Percentage of female students|
-|Married          |FLOAT    |Percentage of married students|
-|Ind_Per          |FLOAT    |Percentage of financially independent students|
-|First_Gen        |FLOAT    |Percentage of first generation students|
-|Degree           |FACTOR   |Predominant degree awarded |
-|HIGHDEG          |FACTOR   |Highest degree awarded (0-non degree awarded;4-graduate degree)|
-|REGION           |FACTOR   |The region where the college is located (10 levels)|
-|NPT4_PRIV        |FLOAT    |Average annual cost of attendance a Private college|
-|NPT4_PUB         |FLOAT    |Average annual cost of attendance a Public college|
-|NUMBRANCH        |FLOAT    |Number of Branch Campuses|
-|CCBASIC          |INTEGER  |Carnegie Classification which describes the colleges|
-|PCIP01           |FLOAT    |Percentage of degrees awarded in Agriculture , Agriculture Operations, And Related Sciences|
-|PCIP03           |FLOAT    |Percentage of degrees awarded in Natural Resources And Conservation|
-|PCIP04           |FLOAT    |Percentage of degrees awarded in Architecture And Related Services|
-|PCIP05           |FLOAT    |Percentage of degrees awarded in Area, Ethnic, Cultural, Gender, And Group Studies|
-|PCIP09           |FLOAT    |Percentage of degrees awarded in Communication, Journalism, And Related Programs|
-|PCIP10           |FLOAT    |Percentage of degrees awarded in Communications Technologies/Technicians And Support Services|
-|CDR3             |FLOAT    |Three-year cohort default rate|
-|CDR3_DENOM       |FLOAT    |Number of students in the cohort for the three-year cohort default rate|
-|PCTPELL          |FLOAT    |Percentage of undergraduates who receive a Pell Grant|
-|PCTFLOAN         |FLOAT    |Percent of all federal undergraduate students receiving a federal student loan|
-|DEBT_N           |FLOAT    |The number of students in the median debt completers cohort|
-|CUML_DEBT_N      |FLOAT    |Number of students in the cumulative loan debt cohort|
+|Type             |FACTOR     |Public or Private Institution|
+|State            |FACTOR     |State|
+|Family_Inc       |NUMERIC    |Average family income in real 2015 dollars ($)|
+|Female           |NUMERIC    |Percentage of female students|
+|Married          |NUMERIC    |Percentage of married students|
+|Ind_Per          |NUMERIC    |Percentage of financially independent students|
+|First_Gen        |NUMERIC    |Percentage of first generation students|
+|Degree           |FACTOR     |Predominant degree awarded |
+|HIGHDEG          |FACTOR     |Highest degree awarded (0-non degree awarded;4-graduate degree)|
+|REGION           |FACTOR     |The region where the college is located (10 levels)|
+|NPT4_PRIV        |NUMERIC    |Average annual cost of attendance a Private college ($)|
+|NPT4_PUB         |NUMERIC    |Average annual cost of attendance a Public college ($)|
+|NUMBRANCH        |NUMERIC    |Number of Branch Campuses|
+|CCBASIC          |INTEGER    |Carnegie Classification which describes the colleges|
+|PCIP01           |NUMERIC    |Percentage of degrees awarded in Agriculture , Agriculture Operations, And Related Sciences|
+|PCIP03           |NUMERIC    |Percentage of degrees awarded in Natural Resources And Conservation|
+|PCIP04           |NUMERIC    |Percentage of degrees awarded in Architecture And Related Services|
+|PCIP05           |NUMERIC    |Percentage of degrees awarded in Area, Ethnic, Cultural, Gender, And Group Studies|
+|PCIP09           |NUMERIC    |Percentage of degrees awarded in Communication, Journalism, And Related Programs|
+|PCIP10           |NUMERIC    |Percentage of degrees awarded in Communications Technologies/Technicians And Support Services|
+|CDR3             |NUMERIC    |Three-year cohort default rate|
+|CDR3_DENOM       |NUMERIC    |Number of students in the cohort for the three-year cohort default rate|
+|PCTPELL          |NUMERIC    |Percentage of undergraduates who receive a Pell Grant|
+|PCTFLOAN         |NUMERIC    |Percent of all federal undergraduate students receiving a federal student loan|
+|DEBT_N           |NUMERIC    |The number of students in the median debt completers cohort|
+|CUML_DEBT_N      |NUMRIC     |Number of students in the cumulative loan debt cohort|
 
 
 
 ## 4.Objectives
-To better understand the differences between private colleges and public institutions, the descriptive statistical analysis is conducted. The detailed steps are described as follows:
+To better understand the differences between private colleges and public institutions, the descriptive statistical analysis is conducted. The graphs and descriptive statistic analysis are implemented to understnad the differneces between public school and private school.  
 
-1. Import and prepare data set. 
-This step imports data set from local directory into R and read the file as csv file. All the necessary packages are installed in the R for later analysis and data visualization. Since we are interested in 26 variables, we select 26 variables from original data set and create a new data set for further analysis. The data manipulation is not implemented in the original data set. 
+To understand how the percentage of degree awarded between public school and private school, the gglot and dplyr function to calculate mean, median, and variance are conducted. This can help students understand how those degrees are awarded between public schools and private schools and give them basic insights on making decisions. 
 
-2. Data preparation. 
-In this step, we clean our data set and modify variables. Missing values for each variable is computed to ensure that variables chosen have less than 20% missing values; data type is transferred into the proper type for analyzing convenience; the target variable Type, Private or Public is code as 0 for private and 1 for public; some independent variables are renamed for interpretation purpose. This step cleans and prepares all the data for further analysis. Dplyr is widely used in this step. 
 
-3. Data summary
-In this step, basic statistical analysis is conducted. The mean, median, and the variance is calculated for each numeric variable. This can help with the general understanding of the data set. `dplyr` package is widely used in this step. 
-
-4. Relationship among variables
-In this step, the relationship between target variables and independent variables as well as the relationship among independent variables is analyzed. When it comes to the relationship among independent variables, the correlation among independent variables from the same category is tested as well as the correlation among independent variables cross different categories. This will help to get the insights on the difference between private colleges and public institutions. This step is crucial in achieving our goal. `ggplot` is widely used in this step. 
 
 5. Conclusion
 This step summarizes the descriptive results for private colleges and public institutions. The descriptive analysis indicates the difference between private school and public school from perspectives such as students' background, degree awarded, tuition and etc. The result can help students understand private and public school better and help them make decision for their education goal. 
