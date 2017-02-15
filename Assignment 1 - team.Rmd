@@ -81,7 +81,7 @@ To better understand the differences between private colleges and public institu
 To understand how the percentage of degree awarded between public school and private school, the gglot and dplyr function to calculate mean, median, and variance are conducted. This can help students understand how those degrees are awarded between public schools and private schools and give them basic insights on making decisions. 
 
 
-5. Conclusion
+##5. Conclusion
 This step summarizes the descriptive results for private colleges and public institutions. The descriptive analysis indicates the difference between private school and public school from perspectives such as students' background, degree awarded, tuition and etc. The result can help students understand private and public school better and help them make decision for their education goal. 
 
 ## 5.Data Preparation
