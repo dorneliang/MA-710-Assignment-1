@@ -193,7 +193,6 @@ csb.class.df %>%
 We can observe from the output that `FAMINC` has 4.16% missing values, `MARRIED` has 15.32% missing values and so on. Then we decide to include only those variables which have less than 20% missing values. This is done by using the `SELECT` command.
 
 ```{r}
-# Select those variables with less than 20% missing values 
 csb.class.df %>%
   select(CONTROL, ST_FIPS, FAMINC, FEMALE, MARRIED,DEP_STAT_PCT_IND, FIRST_GEN, PREDDEG, 
          OPEID, HIGHDEG, REGION, NPT4_PRIV, NPT4_PUB, NUMBRANCH, CCBASIC, CDR3, CDR3_DENOM, PCTPELL, 
@@ -236,7 +235,6 @@ csb.new.df %>%
 Since the names of these variables are not easy to understand, we rename them using the `rename` function of the `dplyr` package.
 
 ```{r}
-# Rename the chosen variables
 csb.new.df %>%
   rename(Type = CONTROL,
          State = ST_FIPS,
@@ -326,8 +324,6 @@ In this section we will focus on comparing the Public vs Private colleges based 
 First we will look at the total number of Public and Private colleges.
 
 ```{r, cache=TRUE}
-
-#Total number pf Public vs Private colleges = there are at least twice as more Private colleges compared to Public
 csb.ren.df %>%
   ggplot  (aes(x   = as.factor(Type))) +
   geom_bar(aes(fill=Type)) 
@@ -339,7 +335,6 @@ From the graph above we can see that there are approximately 2,000 Public colleg
 The Region variable gives information which region a college belongs to. The graph below shows the distribution of colleges by region.
 
 ```{r, cache=TRUE}
-#College count by Region colored by Public vs Private
 csb.ren.df %>%
   ggplot(aes(x=as.factor(REGION))) +
   geom_bar(aes(fill= as.factor(Type)))
@@ -350,9 +345,6 @@ Based on the graph, we can observe that the colleges are not equally distributed
 The variable CCBASIC describes the Carnegie classification of colleges. There are 33 different type of colleges ranging between Associate's college and Doctoral Universities. We will explore the distribution of colleges based on the CCBASIC values.
 
 ```{r, cache=TRUE}
-
-#College count by CCBASIC colored by Public vs Private
-#
 csb.ren.df %>%
   ggplot(aes(x=as.factor(CCBASIC))) +
   geom_bar(aes(fill= as.factor(Type)),
@@ -411,7 +403,6 @@ The last variable to explore is the Tuition(NPT4).
 
 
 ```{r, cache=TRUE}
-#College count by NPT colored by Public vs Private
 csb.ren.df %>%
   ggplot(aes(x=as.factor(Type),
              y=NPT4)) + 
@@ -424,7 +415,6 @@ Based on the box plots, we can see that the Private colleges(on the left) are mo
 Another variable relationship to focus on is whether there is a strong relationship between the tuition and the number of branches.
 
 ```{r}
-#NPT4 by Number of branches
 ggplot(data=csb.ren.df) + 
   aes(x=NPT4,
       y=NUMBRANCH) + 
@@ -651,6 +641,24 @@ csb.ren.df %>%
   ylim(0, 0.5)
 ```
 The result indicates that the range of percentage of communication technology degree awarded in private school is larger than public school. Private school has higher percentage of communication technology degree awarded.The percentage of communication technology degree awarded is more spread in private school than in public school. 
+
+### Logistic regression
+
+The main objective of the project has been to compare the public and private colleges based on a number of criteria in order to determine what are the main differences betwen the two types of educational institutions. As a final step for the project, we will build a logistic regression which includes all our initially selected variables as independent variables and the Type variable (describing the college as either Public or Private) as a dependent variable. The logistic regression is built through the use of the glm function.
+
+
+```{r}
+csb.ren.df$Type <- as.factor(csb.ren.df$Type)
+levels(csb.ren.df$Type)
+csb.df <-na.omit(csb.ren.df)
+str(csb.df)
+mylogit <- glm(Type ~ State + Family_Inc + Female + Married + Ind_Per + First_Gen + Degree + HIGHDEG + REGION + NPT4 + NUMBRANCH + CCBASIC + CDR3_DENOM + CDR3 + PCTPELL + PCTFLOAN + DEBT_N + CUML_DEBT_N + PCIP01 + PCIP03 + PCIP04 + PCIP05 + PCIP09 + PCIP10, data = csb.ren.df, family = "binomial")
+
+summary(mylogit)
+
+```
+
+Based on the regression, we can confirm the observations from the descriptive analysis in the previous sections of this report. From the regression report, we are interested in the varibles which has coefficients different than 0 with 95% confidence. These variables are: State, Female (Percentage of female students), Ind_Per (Percentage of financially independent students), First_Gen (Percentage of first generation students), HIGHDEG (Highest degree awarded 0-non degree awarded;4-graduate degree), NPT4 (Tuiton), NUMBRANCH (Number of branches), CCBASIC (Carnegie Classification which describes the colleges), CDR3_DENOM (Number of students in the cohort for the three-year cohort default rate), CDR3 (Three-year cohort default rate), PCTFLOAN (Percent of all federal undergraduate students receiving a federal student loan), DEBT_N (The number of students in the median debt completers cohort), PCIP10 (Percentage of degree awarded in Communication|Technology), PCIP03 (Percentage of degree in Natural Resources and COnversation). The list of the above variables represents the characterisitcs that differentiate Public and Private college. Based on the results, we can confirm see that the public and private colleges differ by their financial characteristics such as Tuiton and Percentage of financially independent students as well as the percent of federal loans for undergraduate students. The also differ by the type of education being offered (based on the carnegie classification and on the type of degrees). To explore further the difference we will also construct a correlation matrix. 
 
 
 #### Correlation Matrix
