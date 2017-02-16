@@ -428,7 +428,6 @@ Based on the plot, we can see that there is no clear correlation. The majority o
 The next relationship, we are interested in is to see how the tuition relates to region. The question we are exploring is whether some regions are more expensive than other.
 
 ```{r}
-#NPT by REGION and by Public
 csb.ren.df %>%
   ggplot(aes(x=as.factor(REGION), y=NPT4)) +
   geom_boxplot(aes(fill=as.factor(Type)))
