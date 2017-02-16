@@ -76,13 +76,23 @@ There are 26 variables that we are interested in. The variables name,  type and 
 
 
 ## 4.Objectives
-To better understand the differences between private colleges and public institutions, the descriptive statistical analysis is conducted. The graphs and descriptive statistic analysis are implemented to understnad the differneces between public school and private school.  
 
-To understand how the percentage of degree awarded between public school and private school, the gglot and dplyr function to calculate mean, median, and variance are conducted. This can help students understand how those degrees are awarded between public schools and private schools and give them basic insights on making decisions. 
+Our main goal of the project is to compare public and private schools. Based on this goal, we will define a number of objectives:
 
+* Investigating whether public or private colleges are more common in some regions 
+* Compare Private and Public colleges on the level of the degrees they offer
+* Investigate whether public or prvate colleges tend to have higher number of campuses
+* Find out how the tuiton differs between the two type of colleges
+
+* To understand how the percentage of degree awarded between public school and private school, the gglot and dplyr function to calculate mean, median, and variance are conducted. This can help students understand how those degrees are awarded between public schools and private schools and give them basic insights on making decisions. 
+
+
+(***I think the paragraph below should be removed ***)
 This step summarizes the descriptive results for private colleges and public institutions. The descriptive analysis indicates the difference between private school and public school from perspectives such as students' background, degree awarded, tuition and etc. The result can help students understand private and public school better and help them make decision for their education goal. 
 
 ## 5.Data Preparation
+
+In order to understand better the differences between private colleges and public institutions, we will conduct a descriptive statistical analysis.
 
 ### 5.1 Loading libraries
 
@@ -522,7 +532,6 @@ csb.ren.df %>%
 We observe a negative correlation between the family income of students and the percentage of first generation students. This tell us that for the most popular Certificate degrees in the most popular states California, New York and Texas, first generation students have lower family income. 
 
 
-#### DEBT_N, CUML_DEBT_N:
 Positive linear correlation exists between variable DEBT_N(The number of students in the median debt completers cohort) and variable (Number of students in the cumulative loan debt cohort). A smooth line is drawn through the data points. We could fine that the smooth line is straight line, thus the positive linear correlation between these two variables are pretty strong. 
 ```{r}
 csb.ren.df %>%
@@ -531,7 +540,6 @@ csb.ren.df %>%
   stat_smooth()
 ```
 
-#### DEBT_N, CDR3_DENOM: 
 Similarity, we could find the positive linear correlation also exists between DEBT_N and CDR3_DENOM:
 ```{r}
 csb.ren.df %>%
@@ -540,7 +548,6 @@ csb.ren.df %>%
   stat_smooth()
 ```
 
-#### CUML_DEBT_N, CDR3_DENOM:
 In the same way, the positive linear correlation also exists between CUML_DEBT_N and CDR3_DENOM:
 ```{r}
 csb.ren.df %>%
@@ -549,11 +556,10 @@ csb.ren.df %>%
   stat_smooth()
 ```
 
-**Conclusion**: We could notice that inside of the variable group CUML_DEBT_N, CDR3_DENOM and DEBT_N, any two variables have a  strong positive linear correlation.
+Based on the plots, we could notice that inside of the variable group CUML_DEBT_N, CDR3_DENOM and DEBT_N, any two variables have a  strong positive linear correlation.
 
 To evaluate the performance of public and private institution, We use box-plot:  
 
-#### "Type"~"CDR3":
 ```{r}
 csb.ren.df %>%
   ggplot(aes(x=Type,
@@ -564,7 +570,6 @@ csb.ren.df %>%
 
 Because boxes overlap with both medians, no difference can be claimed. Namely we cannot tell if there is a difference in Three-year cohort default rate between public and private institutions.
 
-#### "Type"~"PCTPELL":
 ```{r}
 csb.ren.df %>%
   ggplot(aes(x=Type,
@@ -582,7 +587,6 @@ csb.ren.df %>%
 
 Because boxes overlap but not both medians, it is likely that the Percent of all federal undergraduate students receiving a federal student loan in private colleges is greater than the one of public institutes.
 
-#### "Type"~"DEBT_N":
 ```{r}
 csb.ren.df %>%
   ggplot(aes(x=Type,
@@ -593,7 +597,7 @@ csb.ren.df %>%
 
 Because boxes overlap with both medians, no difference can be claimed. Namely we cannot tell if there is a difference in The number of students in the median debt completers cohort between public and private institutions.
 
-#### "Type"~"PCIP01":
+
 ```{r}
 csb.ren.df %>%
   ggplot(aes(x=Type,
@@ -603,7 +607,6 @@ csb.ren.df %>%
 ```
 The result indicates that the major percentage of taking agriculture degree is less than 0.1 percent in private school and less than 0.2 percent in public school. There are more outlier in private school. 
 
-#### "Type"~"PCIP03":
 ```{r}
 csb.ren.df %>%
   ggplot(aes(x=Type,
@@ -613,7 +616,6 @@ csb.ren.df %>%
 ```
 The result indicates that the majority percentage of taking natural resource degree is less than 0.15 percent in public school and less than 0.1 percent in private school.There are more outliers in private school than in public school.In some private school, the natural degree is awarded more than other private school and public school.
 
-#### "Type"~"PCIP04":
 ```{r}
 csb.ren.df %>%
   ggplot(aes(x=Type,
@@ -623,7 +625,6 @@ csb.ren.df %>%
 ```
 The result indicates that the majority percentage of taking Architecture degree is less than 0.07 percent in private and public school. Private school has higher Architecture degree percentage than public school.There are more outliers in private school.
 
-#### "Type"~"PCIP05":
 ```{r}
 csb.ren.df %>%
 ggplot(aes(x=Type,
@@ -633,7 +634,6 @@ ggplot(aes(x=Type,
 ```
 The result indicates that the majority percentage of Ethnic degree in private school is less than 0.1 percent while it is less than 0.05 in public school. There more higher percentage of Ethnic degree awarded in public school because public school has more outlines.
 
-#### "Type"~"PCIP09":
 ```{r}
 csb.ren.df %>%
   ggplot(aes(x=Type,
@@ -643,7 +643,6 @@ csb.ren.df %>%
 ```
 The result indicates that majority of percentage of communication/journal degree awarded is less than 0.025 in public school.Private school has more high percentage communication egress awarded and has more outliers.
 
-#### "Type"~"PCIP10":
 ```{r}
 csb.ren.df %>%
   ggplot(aes(x=Type,
@@ -654,7 +653,7 @@ csb.ren.df %>%
 The result indicates that the range of percentage of communication technology degree awarded in private school is larger than public school. Private school has higher percentage of communication technology degree awarded.The percentage of communication technology degree awarded is more spread in private school than in public school. 
 
 
-#### Among variables
+#### Correlation Matrix
 The correlation matrix is done among all the independent numeric variables. The code prepares all the numeric independent variables using as.numeric function. The correlation matrix function in dplyr is applied to get the correlation among independent variables. 
 ```{r}
 csb.ren.df %>%
