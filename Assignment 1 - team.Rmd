@@ -96,29 +96,17 @@ In order to understand better the differences between private colleges and publi
 
 ### 5.1 Loading libraries
 
-We will load the `dplyr` package that contains functions for data manipulation using data frames. It allows us to order rows, select rows, select variables, modify variables and summarize variables. 
+We will load the `dplyr` package that contains functions for data manipulation using data frames. It allows us to order rows, select rows, select variables, modify variables and summarize variables. We will also load the `ggplot2` package which is a powerful plotting package that creates elegant and complex plots in R. The `magrittr` library is loaded for the piping operator `%>%`. The `readr` library is loaded to read in the csv file.
+
 ```{r}
 library(dplyr)
-```
-
-We will also load the `ggplot2` package which is a powerful plotting system that creates elegant and complex plots in R.
-```{r}
 library(ggplot2)
-```
-
-The `magrittr` library is loaded for the piping operator `%>%`.
-```{r}
 library(magrittr)
-```
-
-The `readr` library is loaded to read in the csv file.
-```{r}
 library(readr)
 ```
 
-### 5.2 Reading the datafile
+Then we read in the csv file `MERGED2014_15_PP.csv` into the data frame `csb.df` using the `read_csv` function of the `readr` package.
 
-We read in the csv file `MERGED2014_15_PP.csv` into the data frame `csb.df` using the `read_csv` function of the `readr` package.
 ```{r}
 csb.df = read_csv(paste0('C:/Users/Chengdong Liang/Desktop/MA 710/Assignment 1/CollegeScorecard_Raw_Data/', 'MERGED2014_15_PP.csv'))
 
@@ -142,10 +130,10 @@ csbop.df %>%
          PCIP01,PCIP03,PCIP04,PCIP05,PCIP09,PCIP10) %>%
   {.} -> csb.vars.df
 ```
-The resulting data frame `csb.vars.df` contains only the selected variables. Next we examine the structure of this new data frame `csb.vars.df`.
+The resulting data frame `csb.vars.df` contains only the selected variables. Next we get a glimpse of this new data frame `csb.vars.df`. The `glimpse` function allows us to see all the columns in the data frame.
 
 ```{r}
-str(csb.vars.df)
+glimpse(csb.vars.df)
 ```
 
 The output tells us that the data frame `csb.vars.df` has 6893 observations and 27 variables. It also displays the class of these variables.We can see that some of the variables do no belong to the correct class. For instance, `CONTROL`(Type of institution - Public or Private) should be a factor variable, but it is an integer in the data frame. Similarly FEMALE (Percentage of female students) should be an integer, and not a character variable.
