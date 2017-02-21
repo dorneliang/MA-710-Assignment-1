@@ -5,7 +5,7 @@ output: html_document
 
 ## 1. Introduction
 
-The data we are working on is provided by the U.S department of Education. The data set contains information of College Scorecard, federal financial aid and students' earning records. The data set can help to understand the information of getting federal financial and have insights on the school performance as well as students' long term development. The data set contains 1743 variables which are organized into 10 categories. The categories cover a range of topics:
+The data we are working on is provided by the U.S Department of Education. The data set contains information from College Scorecard, federal financial aid and students' earning records. The data set can help to understand the information of getting federal financial aid and have insights on the school performance as well as students' long term development. The data set contains 1743 variables which are organized into 10 categories. The categories cover a range of topics:
 
  * Root - basic information such as School Id and location.
 
@@ -28,11 +28,11 @@ The data we are working on is provided by the U.S department of Education. The d
  * Earnings - statistics on average and median earnings as well as share of former students' earning more than $25,000. 
 
 
-Based on the information provided by the data set,the descriptive analysis is performed. 
+Based on the information provided by the data set, the descriptive analysis is performed. 
 
 
 ## 2.Goals
-"Private colleges vs. public colleges". There is a face-off that is been ongoing for many years. The major difference between public and private colleges lies in how they are funded. Public colleges are funded mostly by state governments, whereas private colleges rely heavily on private contributions, donations and tuition. The goal of our analysis is to compare public institutions and private colleges in terms of their "performance".  A college degree or post-secondary certificate is more important than ever. However, many students are not confident enough to making decision on the type of school they should choose. Our analysis aims at helping students understand the differences between public institutions and private colleges in terms of school size, school performance, tuition cost, degrees awarded, students' background and geographic information. The analysis should give potential students a brief overview of these two types of schools. 
+"Private colleges vs. public colleges". There is a face-off that has been ongoing for many years. The major difference between public and private colleges lies in how they are funded. Public colleges are funded mostly by state governments, whereas private colleges rely heavily on private contributions, donations and tuition. The goal of our analysis is to compare public institutions and private colleges in terms of their "performance."  A college degree or post-secondary certificate is more important than ever. However, many students are not confident enough of making decision on the type of school they should choose. Our analysis aims to help students understand the differences between public institutions and private colleges in terms of school size, school performance, tuition cost, degrees awarded, students' background and geographic information. The analysis should give potential students a brief overview of these two types of schools. 
 
 
 ## 3.DataSet Description
@@ -80,11 +80,11 @@ There are 26 variables that we are interested in. The variables name,  type and 
 Our main goal of the project is to compare public and private schools. Based on this goal, we will define a number of objectives:
 
 * Investigate whether public or private colleges are more common in some regions 
-* Compare Private and Public colleges on the level of the degrees they offer
+* Compare private and public colleges on the level of the degrees they offer
 * Investigate whether public or private colleges tend to have higher number of campuses
-* Find out how the tuition differs between the two type of colleges
-* Use selected variables to explore whether public colleges and private ones are really different from repayment, aid and earnings perspective
-* Understand how the percentage of degree awarded between public school and private school. The `gglot` and `dplyr` function to calculate mean, median, and variance are conducted. This can help students understand how those degrees are awarded between public schools and private schools and give them basic insights on making decisions. 
+* Find out how much the tuition differs between the two type of colleges
+* Use selected variables to explore whether public colleges and private ones are really different in terms of repayment, aid and earnings perspective
+* Understand how the percentage of degrees awarded between public school and private school differ. The `gglot` and `dplyr` functions to calculate mean, median, and variance are conducted. This can help students understand how those degrees are awarded between public schools and private schools and give them basic insights on making decisions. 
 
 
 
@@ -104,7 +104,7 @@ library(magrittr)
 library(readr)
 ```
 
-Then we read in the csv file `MERGED2014_15_PP.csv` into the data frame `csb.df` using the `read_csv` function of the `readr` package.
+Then we read the csv file `MERGED2014_15_PP.csv` into the data frame `csb.df` using the `read_csv` function of the `readr` package.
 
 ```{r,message=FALSE, warning=FALSE}
 csb.df = read_csv(paste0('/Users/student/Desktop/MA710/Tuesday version/Assignment 1/', 'MERGED2014_15_PP.csv'))
@@ -129,15 +129,15 @@ csbop.df %>%
          PCIP01,PCIP03,PCIP04,PCIP05,PCIP09,PCIP10) %>%
   {.} -> csb.vars.df
 ```
-The resulting data frame `csb.vars.df` contains only the selected variables. Next we get a glimpse of this new data frame `csb.vars.df`. The `glimpse` function allows us to see all the columns in the data frame.
+The resulting data frame `csb.vars.df` contains only the selected variables. Next, we get a glimpse of this new data frame `csb.vars.df`. The `glimpse` function allows us to see all the columns in the data frame.
 
 ```{r,message=FALSE, warning=FALSE}
 glimpse(csb.vars.df)
 ```
 
-The output tells us that the data frame `csb.vars.df` has 6893 observations and 27 variables. It also displays the class of these variables.We can see that some of the variables do no belong to the correct class. For instance, `CONTROL`(Type of institution - Public or Private) should be a factor variable, but it is an integer in the data frame. Similarly FEMALE (Percentage of female students) should be an integer, and not a character variable.
+The output tells us that the data frame `csb.vars.df` has 6893 observations and 27 variables. It also displays the class of these variables. We can see that some of the variables do no belong to the correct class. For instance, `CONTROL`(Type of institution - Public or Private) should be a factor variable, but it is an integer in the data frame. Similarly FEMALE (Percentage of female students) should be an integer, and not a character variable.
 
-To convert the class of these variables to the desired class, we use the functions `as.numeric` and `as.factor`, which convert the class variables to `numeric` and `factor` respectively.The code below uses the `MUTATE` command from the `dplyr` library to alter variables of the input data frame `csb.vars.df` and returns the modified data frame `csb.class.df`. 
+To convert the class of these variables to the desired class, we use the functions `as.numeric` and `as.factor`, which convert the class variables to `numeric` and `factor` respectively. The code below uses the `MUTATE` command from the `dplyr` library to alter variables of the input data frame `csb.vars.df` and returns the modified data frame `csb.class.df`. 
 
 ```{r,message=FALSE, warning=FALSE}
 csb.vars.df %>% 
@@ -167,9 +167,9 @@ csb.vars.df %>%
          {.} -> csb.class.df
 ```
 
-The next step is to check for the percentage of NA (missing) values for the above range of variables. This is accomplished by first adding the number of NA values for each variable, dividing it by the `length` of the variable(total number of observations) and multiplying by 100 to convert it into percentage. 
+The next step is to check for the percentage of NA (missing) values for the above range of variables. This is accomplished by first adding the number of NA values for each variable, dividing it by the `length` of the variable (total number of observations) and multiplying by 100 to convert it into percentage. 
 
-Since we would like to apply this function to a range of variables, we use `summarise_at` command. `summarise_at` takes the set of columns to be summarized as the first parameter which in our case wold be all columns and the function to be applied to them as the second parameter.
+Since we would like to apply this function to a range of variables, we use the `summarise_at` command. `Summarise_at` takes the set of columns to be summarized as the first parameter, which in our case would be all columns, and the function to be applied to them as the second parameter.
 
 ```{r,message=FALSE, warning=FALSE}
 csb.class.df %>% 
@@ -189,7 +189,7 @@ csb.class.df %>%
 
 The selected variables are then put into a new data frame `csb.var.df`. 
 
-As the goal of our project is to compare public and private institutions, we want to combine the two types of private institutions : private for-profit and private non-profit into one group called private institutions. We use the `ifelse` command to achieve this by assigning level 0 ( private) to those institutions with a value of 2 (private for-profit) or 3(private non-profit) and level 1 to public institutions. 
+As the goal of our project is to compare public and private institutions, we want to combine the two types of private institutions : private for-profit and private non-profit into one group called private institutions. We use the `ifelse` command to achieve this by assigning level 0 (private) to those institutions with a value of 2 (private for-profit) or 3 (private non-profit) and level 1 to public institutions. 
 
 ```{r,message=FALSE, warning=FALSE}
 
@@ -201,9 +201,9 @@ csb.var.df %>%
 
 The data frame `csb.new.df` now contains the mutated variable `CONTROL` with only two levels - 0 for private institutions and 1 for public institutions.
 
-The variables `NTP4_PRIV` and `NTP4_PUB` describes the average net price of either Public or Private colleges, and are complementing each other. For this reason, we will built a new variable `NPT4` which describes the average net price for both public and private colleges.
+The variables `NTP4_PRIV` and `NTP4_PUB` describe the average net price of either Public or Private colleges and are complementing each other. For this reason, we will build a new variable `NPT4` which describes the average net price for both public and private colleges.
 
-To do this, we first define a function `replace_na_values` which takes the variable as the input and by looping over the entire length of the variable, replaces each NA values by 0.  We call this function on our two variables `NPT4_PRIV` and `NPT4_PUB`. Then we create a new variable `NPT4` by adding the two variables `NPT4_PRIV` and `NPT4_PUB` using the `MUTATE` command.
+To do this, we first define a function `replace_na_values` which takes the variable as the input, and by looping over the entire length of the variable, replaces each NA values by 0.  We call this function on our two variables `NPT4_PRIV` and `NPT4_PUB`. Then we create a new variable `NPT4` by adding the two variables `NPT4_PRIV` and `NPT4_PUB` using the `MUTATE` command.
 
 ```{r, cache=TRUE,message=FALSE, warning=FALSE}
   replace_na_values <- function (variable){
@@ -249,13 +249,13 @@ csb.ren.df %>%
             Graduate=sum(Degree==4))
 ```
 
-The output tells us that there are 2302 private institutions providing predominantly Certificate degree, 532 private institutions providing predominantly Associate degree, 1469 private institutions providing predominantly Bachelor degree and 269 private institutions providing predominantly Graduate degree.
+The output tells us that there are 2302 private institutions providing predominantly Certificate degrees, 532 private institutions providing predominantly Associate degrees, 1469 private institutions providing predominantly Bachelor degrees and 269 private institutions providing predominantly Graduate degrees.
 
-Similarly the figures for public institutions are 602 providing predominantly Certificate degree, 766 providing predominantly Associate degree, 590 providing predominantly Bachelor degree and 16 private institutions providing predominantly Graduate degree. The largest share (2302 institutions) is that of private institutions providing predominantly Certificate degree.
+Similarly the figures for public institutions are 602 providing predominantly Certificate degrees, 766 providing predominantly Associate degrees, 590 providing predominantly Bachelor degrees and 16 private institutions providing predominantly Graduate degrees. The largest share (2302 institutions) is that of private institutions providing predominantly Certificate degrees.
 
 ### 6.2 Student demographics variables
 
-The summary statistics for all the numeric variables were obtained using the `summarise_if` function. This function was used in combination with `is.numeric` to summarize only those variables which were numeric. We also grouped these variables by their `Type` which is Public or Private, before summarizing.The descriptive measures chosen were mean, median and variance. The `options` command was used to set the column width to infinity in order to see all the columns.
+The summary statistics for all the numeric variables were obtained using the `summarise_if` function. This function was used in combination with `is.numeric` to summarize only those variables which were numeric. We also grouped these variables by their `Type`, which is Public or Private, before summarizing. The descriptive measures chosen were mean, median and variance. The `options` command was used to set the column width to infinity in order to see all the columns.
 
 ```{r,message=FALSE, warning=FALSE}
 options(dplyr.width=Inf)
@@ -265,11 +265,11 @@ csb.ren.df %>%
   summarise_if(is.numeric, funs(mean, median), na.rm=TRUE)
 ```
 
-We can observe how these measures vary considerably for public and private institutions.Though the average family income for both type of institutions is roughly similar, the median family income for Public institutions ($ 31,000) is ~$3,000 more than that of Private institutions ($28,000). This is an interesting finding as private institutions being more expensive, should be expected to be attended by students coming from the higher income bracket. It can also be seen that private institutions have a larger average share of female students, married students, financially independent and first-generation students.
+We can observe how these measures vary considerably for public and private institutions.Though the average family income for both type of institutions is roughly similar, the median family income for Public institutions ($31,000) is ~$3,000 more than that of Private institutions ($28,000). This is an interesting finding as private institutions being more expensive, should be expected to be attended by students coming from the higher income bracket. It can also be seen that private institutions have a larger average share of female students, married students, financially independent and first-generation students.
 
 ### 6.3 Aid variables
 
-The code below is used to summarize the variables related to aid in the data set. These variables are Percentage of undergraduates who receive a Pell Grant, percent of all federal undergraduate students receiving a federal student loan, three-year cohort default rate, number of students in the cohort for the three-year cohort default rate, number of students in the median debt completers cohort and number of students in the cumulative loan debt cohort.
+The code below is used to summarize the variables related to aid in the data set. These variables are percent of undergraduates who receive a Pell Grant, percent of all federal undergraduate students receiving a federal student loan, three-year cohort default rate, number of students in the cohort for the three-year cohort default rate, number of students in the median debt completers cohort and number of students in the cumulative loan debt cohort.
 
 ```{r,message=FALSE, warning=FALSE}
 options(dplyr.width=Inf)
@@ -281,13 +281,14 @@ csb.ren.df %>%
 
 From the output, we could summarize that private institutions have a much higher mean and median value for the percentage of undergraduates who receive a Pell Grant, who receive a Federal loan, and number of students in the cumulative loan debt cohort.
 
-In terms of variance, variables denoting percentage of undergraduates who receive a Pell Grant, the number of students in the median debt completers cohort, number of students in the cumulative loan debt cohort and number of students in the cohort for the three-year cohort default rate are higher for Private institutions.
+In terms of variance, variables denoting percentage of undergraduates who receive a Pell Grant, the number of students in the median debt completers cohort, number of students in the cumulative loan debt cohort and number of students in the cohort for the three-year cohort default rate are higher for private institutions.
 
-Thus we can see that the summary statistics reveals that considerable difference exists between Public and Private institutions.
+Thus we can see that the summary statistics reveals that considerable difference exists between public and private institutions.
 
 ### 6.4 Academics variables
 
-Finally we summarized the variables in the academics category.The variables chosen were the percentage of degrees awarded in 
+Finally we summarized the variables in the academics category. The variables chosen were the percent of degrees awarded in 
+
 1) Agriculture , Agriculture Operations, And Related Sciences 
 2) Natural Resources And Conservation
 3) Architecture And Related Services 
@@ -300,15 +301,15 @@ csb.vars.df %>%
   group_by (CONTROL) %>%
   summarise_if(is.numeric, funs(mean, median, var), na.rm=TRUE)
 ```
-The result indicated that the averages of the percentage of awarded degree in those 6 fields are less than 1% .Among those 6 awarded degree, the mean of the PCIP09 is the largest regardless of the control type.This result indicates that among those 6 variables, percentages of degrees awarded in Communication are awarded more than other degree.The variance of those 6 variables are relatively small, which means that from 2014 to 2015,the percentage of those 6 awarded degrees are almost the same in general. It does not vary to much in different institutes.PCIP01,PCIP03,PCIP05,PCIP09 degrees are awarded more in public school than private school. 
+The results indicated that the averages of the percentage of awarded degrees in those six fields are less than 1%. Among those six awarded degrees, the mean of the PCIP09 is the largest, regardless of the control type. This result indicates that among those six variables, percentages of degrees awarded in Communication are awarded more than other degrees. The variance of those six variables are relatively small, which means that from 2014 to 2015 the percentage of those six awarded degrees are almost the same. It does not vary too much in different institutes. PCIP01, PCIP03, PCIP05, PCIP09 degrees are awarded more in public schools than private schools. 
 
 
 ## 7.Variable relationship
 
 
-In this section we will focus on comparing the Public vs Private colleges based on a number of characteristics that describes the colleges such as the cost of attendance, income level of students, loan information and repayment rates,gender, degrees.
+In this section, we will focus on comparing the public vs private colleges based on a number of characteristics that describes the colleges such as the cost of attendance, income level of students, loan information and repayment rates, gender, degrees.
 
-First we will look at the total number of Public and Private colleges.
+First, we will look at the total number of public and private colleges.
 
 ```{r, cache=TRUE,message=FALSE, warning=FALSE}
 csb.ren.df %>%
@@ -319,7 +320,7 @@ csb.ren.df %>%
   labs(x="Type")
 ```
 
-From the graph above we can see that there are approximately 2,000 Public colleges in the data set we are exploring. The number of Private colleges is more than twice the number of Public colleges.That means that we will have more data available for Private colleges and we will be able to draw more conclusion for them based on the data set.
+From the graph above we can see that there are approximately 2,000 public colleges in the data set we are exploring. The number of private colleges is more than twice the number of Public colleges. That means that we will have more data available for private colleges and we will be able to draw more conclusions for them based on the data set.
 
 
 The Region variable gives information which region a college belongs to. The graph below shows the distribution of colleges by region.
@@ -332,9 +333,9 @@ csb.ren.df %>%
   labs(x="Region")
 ```
 
-Based on the graph, we can observe that the colleges are not equally distributed among regions. Some regions such as numbers 2(Mid East),3(Great Lakes) and 5(Southeast) have much  larger amount of colleges compared to 7(Rocky Mountains) and 9(Outlying areas). In addition the ratio of the Public vs Private colleges changes between regions.Regions such as 9(outlying areas) has relatively high Private vs Public ratio while other regions such as 5(Southeast) have more balanced representation of both Public and Private colleges.
+Based on the graph, we can observe that the colleges are not equally distributed among regions. Some regions such as numbers 2 (Mid East), 3 (Great Lakes) and 5 (Southeast) have a considerably larger amount of colleges compared to 7 (Rocky Mountains) and 9 (Outlying areas). In addition, the ratio of the public vs private colleges changes between regions. Regions such as 9 (outlying areas) have relatively high private vs public ratios while other regions such as 5 (Southeast) have more balanced representation of both Public and Private colleges.
 
-The variable `CCBASIC` describes the Carnegie classification of colleges. There are 33 different type of colleges ranging between Associate's college and Doctoral Universities. We will explore the distribution of colleges based on the CCBASIC values.
+The variable `CCBASIC` describes the Carnegie classification of colleges. There are 33 different type of colleges ranging between Associate's colleges and Doctoral Universities. We will explore the distribution of colleges based on the CCBASIC values.
 
 ```{r, cache=TRUE,message=FALSE, warning=FALSE}
 csb.ren.df %>%
@@ -345,7 +346,7 @@ csb.ren.df %>%
   labs(x="CCBASIC")
 ```
 
-From the plot, we can see that some categories are stronger represented. A significant amount of the values belong to category (-2) which means that the classification is not applicable. In addition we can see that Public colleges are represented better in some categories(1,2,3,4,5) while private colleges are strongly represented in other categories such as 21,22,23. In order to be able to explore the graph in more details, we will remove the not classified colleges and will split the rest of the data in two parts - categories which are strongly represented by Public colleges and these which are strongly represented by Private colleges. In order to achieve the sub setting we will use the filter function from the `dplyr` package.
+From the plot, we can see that some categories are highly represented. A significant amount of the values belong to category (-2) which means that the classification is not applicable. In addition, we can see that public colleges are represented better in some categories(1, 2, 3, 4, 5) while private colleges are strongly represented in other categories such as 21, 22, 23. In order to be able to explore the graph in more details, we will remove the not classified colleges and will split the rest of the data in two parts - categories which are strongly represented by Public colleges and these which are strongly represented by Private colleges. In order to achieve the sub setting we will use the filter function from the `dplyr` package.
 
 
 ```{r, cache=TRUE,message=FALSE, warning=FALSE}
@@ -372,9 +373,9 @@ csb.ren.priv.ccbasic.df %>%
   labs(x="CCBASIC")
 ```
 
-Based on the output, we can see that 9 (Associate's Colleges: High Vocational & Technical-High Nontraditional) and  14(Baccalaureate/Associate's Colleges: Associate's Dominant) are with almost equal numbers of Public and Private colleges. The rest of the categories are strongly dominated by one type or another. It's interesting to see that the majority of the Associates' colleges are mostly Public with very few Private options. On the other hand the Special focus Two-Years and the Baccalaureate colleges are mostly Private ones.
+Based on the output, we can see that 9 (Associate's Colleges: High Vocational & Technical-High Nontraditional) and  14(Baccalaureate/Associate's Colleges: Associate's Dominant) are with almost equal numbers of Public and Private colleges. The rest of the categories are strongly dominated by one type or another. It's interesting to see that the majority of the Associates' colleges are mostly public with very few private options. On the other hand, the Special focus Two-Years and the Baccalaureate colleges are mostly Private ones.
 
-The next variable to explore is the Number of Branches. Again we will see the distribution colored based on the Public vs Private options.
+The next variable to explore is the Number of Branches. Again, we will see the distribution colored based on the public vs private options.
 
 ```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
@@ -385,7 +386,7 @@ csb.ren.df %>%
   labs(x="NUMBRANCH")
 ```
 
-From the graph, it is visible that the Private colleges are the ones that offer more branches. The Public colleges rarely have more than 6 branches. The majority of the colleges are with only one branch.
+From the graph, it is visible that the private colleges are the ones that offer more branches. The public colleges rarely have more than 6 branches. The majority of the colleges are with only one branch.
 
 The next variable in our exploratory analysis is the `HIGHDEG`. It describes the highest degree awarded at the college. There are 5 levels of degree described through the variable (0 - non-degree-granting, 1 - Certificate degree, 2 - Associate degree, 4 - Graduate degree).
 
@@ -398,7 +399,7 @@ csb.ren.df %>%
   labs(x="HIGHDEG")
 ```
 
-From the graph we can see that categories 0 (no degree), 1(Certificate) and 3(Bachelors) are very strongly represented by Private colleges. The Public colleges are stronger in giving Associate degrees and Graduate degrees.
+From the graph, we can see that categories 0 (no degree), 1 (Certificate) and 3 (Bachelors) are very strongly represented by private colleges. The Public colleges are stronger in giving Associate degrees and Graduate degrees.
 
 The last variable to explore is the Tuition(NPT4).
 
@@ -425,9 +426,9 @@ ggplot(data=csb.ren.df) +
              alpha=0.2)
 ```
 
-Based on the plot, we can see that there is no clear correlation. The majority of the points are at the bottom of the graph which is explained by the fact that most of the colleges has 1 branch only. We can see that some colleges with very high number of branches, which stands out on the top of the graph, are with medium tuition in the range of 20,000 - 25,000. And the most expensive colleges has 1 branch only. Therefore we can not find a clear correlation between tuition and number of branches.
+Based on the plot, we can see that there is no clear correlation. The majority of the points are at the bottom of the graph which is explained by the fact that most of the colleges has 1 branch only. We can see that some colleges with very high number of branches, which stands out on the top of the graph, are with medium tuition in the range of 20,000 - 25,000. And the most expensive colleges has 1 branch only. Therefore, we can not find a clear correlation between tuition and number of branches.
 
-The next relationship, we are interested in is to see how the tuition relates to region. The question we are exploring is whether some regions are more expensive than other.
+The next relationship we are interested in is to see how the tuition relates to region. The question we are exploring is whether some regions are more expensive than other.
 
 ```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
@@ -437,9 +438,9 @@ csb.ren.df %>%
   labs(x="Region")
 ```
 
-The graph represents the tuition by region and by Public vs Private colleges. We can see that the tuition for the Public colleges is in general lower for each of the 9th regions. We can also observe that most of the regions are with comparable tuition when we compare the Private colleges and the Public colleges separately. Region 1(New England) stands out as the most expensive region when it comes to both Public and Private. While region 9 (Outlying areas) stands out as the cheapest area for education. Region 5(Southeast) has some very expensive colleges which stands out as outliers.
+The graph represents the tuition by region and by public vs private colleges. We can see that the tuition for the public colleges is in general lower for each of the 9th regions. We can also observe that most of the regions are with comparable tuition when we compare the private colleges and the public colleges separately. Region 1 (New England) stands out as the most expensive region when it comes to both public and private. Region 9 (Outlying areas) stands out as the cheapest area for education. Region 5(Southeast) has some very expensive colleges which stand out as outliers.
 
-The next comparison is between the Classification and the Tuition We are exploring whether the tuition varies by the type of college.
+The next comparison is between the Classification and the Tuition, we are exploring whether the tuition varies by the type of college.
 
 ```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
@@ -447,9 +448,9 @@ csb.ren.df %>%
   geom_point(aes(color=Type))
 ```
 
-As we already discovered in previous graphs, certain type of colleges such as Associates are more strongly represented by Public colleges. As a result their tuition is lower than the tuition of other categories which are strongly represented by Private colleges such as Special focus Two Year colleges.
+As we already discovered in previous graphs, certain type of colleges such as Associates are more strongly represented by Public colleges. As a result, their tuition is lower than the tuition of other categories which are strongly represented by Private colleges such as Special focus Two Year colleges.
 
-It is also interesting to explore whether some regions tend to have colleges with more branches and how that is affected by Public vs Private classification.
+It is also interesting to explore whether some regions tend to have colleges with more branches and how that is affected by public vs private classification.
 
 
 ```{r,message=FALSE, warning=FALSE}
@@ -459,7 +460,7 @@ csb.ren.df %>%
   xlab("REGION")
 ```
 
-From the graph, we can see that the number of branches are approximately equally distributed between the regions. Region 1(New England) and Region 9 (Outlying areas) have colleges which are in general with slightly less number of branches. That could be explained by the geographical size of the regions. If the region is larger then it would make sense for the college to expand the number of branches in order to cover larger students' population.
+From the graph, we can see that the number of branches are approximately equally distributed between the regions. Region 1 (New England) and Region 9 (Outlying areas) have colleges which are in general with slightly less number of branches. That could be explained by the geographical size of the regions. If the region is larger then it would make sense for the college to expand the number of branches in order to cover larger students' population.
 
 
 
@@ -575,6 +576,7 @@ csb.ren.df %>%
 ```
 
 Because boxes overlap but not both medians, it is likely that the Percentage of undergraduates who receive a Pell Grant in private colleges is greater than the one of public institutes.
+
 ```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=Type,
@@ -585,7 +587,7 @@ csb.ren.df %>%
   labs(x="Type")
 ```
 
-Because boxes overlap but not both medians, it is likely that the Percent of all federal undergraduate students receiving a federal student loan in private colleges is greater than the one of public institutes.
+Because boxes overlap but not both medians, it is likely that the percent of all federal undergraduate students receiving a federal student loan in private colleges is greater than the one of public institutes.
 
 ```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
@@ -598,7 +600,7 @@ csb.ren.df %>%
   labs(x="Type")
 ```
 
-Because boxes overlap with both medians, no difference can be claimed. Namely we cannot tell if there is a difference in The number of students in the median debt completers cohort between public and private institutions.
+Because boxes overlap with both medians, no difference can be claimed. Namely, we cannot tell if there is a difference in the number of students in the median debt completers cohort between public and private institutions.
 
 
 ```{r,message=FALSE, warning=FALSE}
@@ -650,7 +652,7 @@ ggplot(aes(x=Type,
   labs(x="Type")
 ```
 
-The result indicates that the majority percentage of Ethnic degree in private school is less than 0.1 percent while it is less than 0.05 in public school. There more higher percentage of Ethnic degree awarded in public school because public school has more outlines.
+The result indicates that the majority percentage of Ethnic degree in private school is less than 0.1 percent while it is less than 0.05 in public school. There is a higher percentage of Ethnic degree awarded in public school because public school has more outlines.
 
 ```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
@@ -663,7 +665,7 @@ csb.ren.df %>%
   labs(x="Type")
 ```
 
-The result indicates that majority of percentage of communication/journal degree awarded is less than 0.025 in public school.Private school has more high percentage communication egress awarded and has more outliers.
+The result indicates that the majority of percentage of communication/journal degree awarded is less than 0.025 in public school. Private school has a higher percentage communication degress awarded and has more outliers.
 
 ```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
@@ -676,7 +678,7 @@ csb.ren.df %>%
   labs(x="Type")
 ```
 
-The result indicates that the range of percentage of communication technology degree awarded in private school is larger than public school. Private school has higher percentage of communication technology degree awarded.The percentage of communication technology degree awarded is more spread in private school than in public school. 
+The result indicates that the range of percentage of communication technology degree awarded in private school is larger than public school. Private school has higher percentage of communication technology degree awarded. The percentage of communication technology degree awarded is more spread out in private school than in public school. 
 
 ### Logistic regression
 
@@ -731,6 +733,6 @@ For private school, "Ind_Per"" has 0.6 correlation with "First_Gen" and "HIGHDEG
 
 ##Conclusion
 
-Based on the exploratory analysis of the selected variables, we can say that there are some clear distinctions between Public and Private colleges. Public and Private colleges tends to offer different types of degrees among each based on the Carnegie Classification. Additionally, the degree concentration varies between the two types of colleges with higher number of Architectural and Communication technologies degrees offered at Private colleges compared to Public colleges and at the same time higher number of Ethic and Agricultural degrees offered at Public Colleges. The tuition is another major difference between Public and Private with higher tuition at Private colleges where we can also observe an extreme outliers indicating very expensive Private institutions. The tuition of the college doesn't affect the income level of the attending students with some very low income students attending Private schools and at the same time very high income students preferring to enroll at Public colleges. This could be explained by the higher level of federal and Pell grants which are given to students attending Private schools. Even though the private schools are more expensive compared to the Public colleges, students from lower-income households receive a variety of grants which allow them to afford the expensive intuitions. The income level does affect the degree that the students are enrolled in. Our analysis indicates that students with the highest income prefer strongly Bachelor degrees while students with lower income are usually enrolled at Associate degrees or Certificate programs which could be explained by the significantly higher costs for Bachelor degrees compared to the rest.Private and Public colleges are also not spread out evenly in different regions of the country. That may be explained by the differences in the income levels and differences in the type of education needed in different parts of the country.
+Based on the exploratory analysis of the selected variables, we can say that there are some clear distinctions between public and private colleges. Public and private colleges tends to offer different types of degrees among each other based on the Carnegie Classification. Additionally, the degree concentration varies between the two types of colleges with higher number of Architectural and Communication technologies degrees offered at private colleges compared to public colleges and at the same time higher number of Ethic and Agricultural degrees offered at public Colleges. The tuition is another major difference between public and private, with higher tuition at Private colleges where we can also observe an extreme outliers indicating very expensive private institutions. There is no clear correlation between the tuition of the college and the income level of the attending students with some very low income students attending private schools and high income students preferring to enroll at public colleges. This could be explained by the higher level of federal and Pell grants which are given to students attending Private schools. Even though the private schools are more expensive compared to the Public colleges, students from lower-income households receive a variety of grants which allow them to afford the expensive institutions. The income level does affect the degree that the students are enrolled in. Our analysis indicates that students with the highest income strongly prefer Bachelor degrees while students with lower income are usually enrolled at Associate degrees or Certificate programs which could be explained by the significantly higher costs for Bachelor degrees compared to the rest. Private and Public colleges are also not spread out evenly in different regions of the country. That may be explained by the differences in the income levels and differences in the type of education needed in different parts of the country.
 
-Overall we can conclude that Private and Public colleges complement each other. They serve different needs of the population in terms of type of degrees and concentration offered as well as more affordability which comes as lower tuition for the Public colleges and more grants available for Private colleges.
+Overall, we can conclude that Private and Public colleges complement each other. They serve different needs of the population in terms of type of degrees and concentrations offered as well as more affordability which comes at lower tuition for the Public colleges and more grants available for Private colleges.
