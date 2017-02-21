@@ -39,9 +39,9 @@ Based on the information provided by the data set,the descriptive analysis is pe
 
 There are 26 variables that we are interested in. The variables name,  type and descriptions are listed below. 
 
-*For variable NPT4_PRIV and NPT4_PUB, they includes tuition, supplies, living expenses minus the average grand or scholarship; the cost is calculated for full-time, fist-time, degree and certificate seeking undergraduates
+*For variable `NPT4_PRIV` and `NPT4_PUB`, they includes tuition, supplies, living expenses minus the average grand or scholarship; the cost is calculated for full-time, fist-time, degree and certificate seeking undergraduates
 
-*For variable CCBASIC, the Carnegie Classification describes the colleges as either Associate's college Special focus, Baccalaureate/Associate, Doctoral University, or Tribal college. 
+*For variable `CCBASIC`, the Carnegie Classification describes the colleges as either Associate's college Special focus, Baccalaureate/Associate, Doctoral University, or Tribal college. 
 
 
 |Variables        |Type     |Descriptions|
@@ -81,14 +81,13 @@ Our main goal of the project is to compare public and private schools. Based on 
 
 * Investigating whether public or private colleges are more common in some regions 
 * Compare Private and Public colleges on the level of the degrees they offer
-* Investigate whether public or prvate colleges tend to have higher number of campuses
-* Find out how the tuiton differs between the two type of colleges
+* Investigate whether public or private colleges tend to have higher number of campuses
+* Find out how the tuition differs between the two type of colleges
+* Using selected variables to explore whether public colleges and private ones are really different from repayment, aid and earnings perspective
+* To understand how the percentage of degree awarded between public school and private school, the `gglot` and `dplyr` function to calculate mean, median, and variance are conducted. This can help students understand how those degrees are awarded between public schools and private schools and give them basic insights on making decisions. 
 
-* To understand how the percentage of degree awarded between public school and private school, the gglot and dplyr function to calculate mean, median, and variance are conducted. This can help students understand how those degrees are awarded between public schools and private schools and give them basic insights on making decisions. 
 
 
-(***I think the paragraph below should be removed ***)
-This step summarizes the descriptive results for private colleges and public institutions. The descriptive analysis indicates the difference between private school and public school from perspectives such as students' background, degree awarded, tuition and etc. The result can help students understand private and public school better and help them make decision for their education goal. 
 
 ## 5.Data Preparation
 
@@ -98,7 +97,7 @@ In order to understand better the differences between private colleges and publi
 
 We will load the `dplyr` package that contains functions for data manipulation using data frames. It allows us to order rows, select rows, select variables, modify variables and summarize variables. We will also load the `ggplot2` package which is a powerful plotting package that creates elegant and complex plots in R. The `magrittr` library is loaded for the piping operator `%>%`. The `readr` library is loaded to read in the csv file.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 library(dplyr)
 library(ggplot2)
 library(magrittr)
@@ -107,7 +106,7 @@ library(readr)
 
 Then we read in the csv file `MERGED2014_15_PP.csv` into the data frame `csb.df` using the `read_csv` function of the `readr` package.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.df = read_csv(paste0('C:/Users/Chengdong Liang/Desktop/MA 710/Assignment 1/CollegeScorecard_Raw_Data/', 'MERGED2014_15_PP.csv'))
 
 ```
@@ -115,7 +114,7 @@ csb.df = read_csv(paste0('C:/Users/Chengdong Liang/Desktop/MA 710/Assignment 1/C
 
 For our analysis, we wish to include only those institutions which are currently operating. So we filter the rows to keep those which have `CURROPER` equal to 1.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.df %>%
   filter(CURROPER ==1) %>%
   {.} -> csbop.df
@@ -123,7 +122,7 @@ csb.df %>%
 The new data frame `csbop.df` consists of only currently operating institutions.
 Based on our decision to select certain variables, we will use the `SELECT` command from `dply` package to create a smaller data frame which contains only the variables of interest.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csbop.df %>%
   select(CONTROL, ST_FIPS, FAMINC, FEMALE, MARRIED,DEP_STAT_PCT_IND, FIRST_GEN, PREDDEG, CDR3, CDR3_DENOM,
          PCTPELL, PCTFLOAN, DEBT_N, CUML_DEBT_N, OPEID, HIGHDEG, REGION, NPT4_PRIV, NPT4_PUB, NUMBRANCH, CCBASIC,
@@ -132,7 +131,7 @@ csbop.df %>%
 ```
 The resulting data frame `csb.vars.df` contains only the selected variables. Next we get a glimpse of this new data frame `csb.vars.df`. The `glimpse` function allows us to see all the columns in the data frame.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 glimpse(csb.vars.df)
 ```
 
@@ -140,7 +139,7 @@ The output tells us that the data frame `csb.vars.df` has 6893 observations and 
 
 To convert the class of these variables to the desired class, we use the functions `as.numeric` and `as.factor`, which convert the class variables to `numeric` and `factor` respectively.The code below uses the `MUTATE` command from the `dplyr` library to alter variables of the input data frame `csb.vars.df` and returns the modified data frame `csb.class.df`. 
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.vars.df %>% 
   mutate(FAMINC  = as.numeric(FAMINC),
          FEMALE = as.numeric(FEMALE), 
@@ -172,7 +171,7 @@ The next step is to check for the percentage of NA (missing) values for the abov
 
 Since we would like to apply this function to a range of variables, we use `summarise_at` command. `summarise_at` takes the set of columns to be summarized as the first parameter which in our case wold be all columns and the function to be applied to them as the second parameter.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.class.df %>% 
   summarise_at(.cols = vars(),
                .funs = function(x) sum(is.na(x))/length(x))*100
@@ -192,7 +191,7 @@ The selected variables are then put into a new data frame `csb.var.df`.
 
 As the goal of our project is to compare public and private institutions, we want to combine the two types of private institutions : private for-profit and private non-profit into one group called private institutions. We use the `ifelse` command to achieve this by assigning level 0 ( private) to those institutions with a value of 2 (private for-profit) or 3(private non-profit) and level 1 to public institutions. 
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 
 csb.var.df %>%
   mutate(CONTROL = ifelse((CONTROL==2|CONTROL==3),0,1)) %>%
@@ -206,7 +205,7 @@ The variables `NTP4_PRIV` and `NTP4_PUB` describes the average net price of eith
 
 To do this, we first define a function `replace_na_values` which takes the variable as the input and by looping over the entire length of the variable, replaces each NA values by 0.  We call this function on our two variables `NPT4_PRIV` and `NPT4_PUB`. Then we create a new variable `NPT4` by adding the two variables `NPT4_PRIV` and `NPT4_PUB` using the `MUTATE` command.
 
-```{r, cache=TRUE}
+```{r, cache=TRUE,message=FALSE, warning=FALSE}
   replace_na_values <- function (variable){
     for (i in 1:length(variable)){
       if (is.na(variable[i])){
@@ -222,7 +221,7 @@ csb.new.df %>%
 ```
 Since the names of these variables are not easy to understand, we rename them using the `rename` function of the `dplyr` package.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.new.df %>%
   rename(Type = CONTROL,
          State = ST_FIPS,
@@ -241,7 +240,7 @@ The data frame `csb.ren.df` contains our final set of variables, ready for furth
 ### 6.1 Degree and type
 
 The following code is used to summarize the factor variable `Degree` using aggregates. We first group the institutions by their type and count the total number of institutions providing predominantly Certificate, Associate, Bachelor and Graduate degrees. The code used is:
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>% 
   group_by(Type) %>%
   summarise(Certificate=sum(Degree==1),
@@ -258,7 +257,7 @@ Similarly the figures for public institutions are 602 providing predominantly Ce
 
 The summary statistics for all the numeric variables were obtained using the `summarise_if` function. This function was used in combination with `is.numeric` to summarize only those variables which were numeric. We also grouped these variables by their `Type` which is Public or Private, before summarizing.The descriptive measures chosen were mean, median and variance. The `options` command was used to set the column width to infinity in order to see all the columns.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 options(dplyr.width=Inf)
 csb.ren.df %>% 
   select(Type, State, Family_Inc, Female, Married, Ind_Per, First_Gen) %>%
@@ -272,7 +271,7 @@ We can observe how these measures vary considerably for public and private insti
 
 The code below is used to summarize the variables related to aid in the data set. These variables are Percentage of undergraduates who receive a Pell Grant, percent of all federal undergraduate students receiving a federal student loan, three-year cohort default rate, number of students in the cohort for the three-year cohort default rate, number of students in the median debt completers cohort and number of students in the cumulative loan debt cohort.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 options(dplyr.width=Inf)
 csb.ren.df %>% 
   select(Type, CDR3, CDR3_DENOM, PCTPELL, PCTFLOAN, DEBT_N, CUML_DEBT_N) %>%
@@ -295,7 +294,7 @@ Finally we summarized the variables in the academics category.The variables chos
 4) Area, Ethnic, Cultural, Gender, And Group Studies 
 5) Communication, Journalism, And Related Programs.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 options(dplyr.width=Inf)
 csb.vars.df %>% 
   group_by (CONTROL) %>%
@@ -311,10 +310,13 @@ In this section we will focus on comparing the Public vs Private colleges based 
 
 First we will look at the total number of Public and Private colleges.
 
-```{r, cache=TRUE}
+```{r, cache=TRUE,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot  (aes(x   = as.factor(Type))) +
-  geom_bar(aes(fill=Type)) 
+  geom_bar(aes(fill=Type)) +
+  scale_x_discrete(labels= c("Private", "Public")) +
+  scale_fill_discrete(labels= c("Private", "Public")) +
+  labs(x="Type")
 ```
 
 From the graph above we can see that there are approximately 2,000 Public colleges in the data set we are exploring. The number of Private colleges is more than twice the number of Public colleges.That means that we will have more data available for Private colleges and we will be able to draw more conclusion for them based on the data set.
@@ -322,27 +324,31 @@ From the graph above we can see that there are approximately 2,000 Public colleg
 
 The Region variable gives information which region a college belongs to. The graph below shows the distribution of colleges by region.
 
-```{r, cache=TRUE}
+```{r, cache=TRUE,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=as.factor(REGION))) +
-  geom_bar(aes(fill= as.factor(Type)))
+  geom_bar(aes(fill= as.factor(Type))) +
+  scale_fill_discrete(name="Type", labels= c("Private", "Public")) +
+  labs(x="Region")
 ```
 
 Based on the graph, we can observe that the colleges are not equally distributed among regions. Some regions such as numbers 2(Mid East),3(Great Lakes) and 5(Southeast) have much  larger amount of colleges compared to 7(Rocky Mountains) and 9(Outlying areas). In addition the ratio of the Public vs Private colleges changes between regions.Regions such as 9(outlying areas) has relatively high Private vs Public ratio while other regions such as 5(Southeast) have more balanced representation of both Public and Private colleges.
 
-The variable CCBASIC describes the Carnegie classification of colleges. There are 33 different type of colleges ranging between Associate's college and Doctoral Universities. We will explore the distribution of colleges based on the CCBASIC values.
+The variable `CCBASIC` describes the Carnegie classification of colleges. There are 33 different type of colleges ranging between Associate's college and Doctoral Universities. We will explore the distribution of colleges based on the CCBASIC values.
 
-```{r, cache=TRUE}
+```{r, cache=TRUE,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=as.factor(CCBASIC))) +
   geom_bar(aes(fill= as.factor(Type)),
-            position='dodge')
-
+            position='dodge') +
+  scale_fill_discrete(name= "Type", labels= c("Private", "Public")) +
+  labs(x="CCBASIC")
 ```
+
 From the plot, we can see that some categories are stronger represented. A significant amount of the values belong to category (-2) which means that the classification is not applicable. In addition we can see that Public colleges are represented better in some categories(1,2,3,4,5) while private colleges are strongly represented in other categories such as 21,22,23. In order to be able to explore the graph in more details, we will remove the not classified colleges and will split the rest of the data in two parts - categories which are strongly represented by Public colleges and these which are strongly represented by Private colleges. In order to achieve the sub setting we will use the filter function from the `dplyr` package.
 
 
-```{r, cache=TRUE}
+```{r, cache=TRUE,message=FALSE, warning=FALSE}
 csb.ren.df %>% 
   filter(CCBASIC %in% c(1:9, 14:18)) %>%
   {.} -> csb.ren.pub.ccbasic.df
@@ -354,35 +360,42 @@ csb.ren.df %>%
 csb.ren.pub.ccbasic.df %>%
   ggplot(aes(x=as.factor(CCBASIC))) +
   geom_bar(aes(fill= as.factor(Type)),
-            position='dodge')
+            position='dodge') +
+  scale_fill_discrete(name= "Type", labels= c("Private", "Public")) +
+  labs(x="CCBASIC")
 
 csb.ren.priv.ccbasic.df %>%
   ggplot(aes(x=as.factor(CCBASIC))) +
   geom_bar(aes(fill= as.factor(Type)),
-            position='dodge')
-
+            position='dodge') +
+  scale_fill_discrete(name= "Type", labels= c("Private", "Public")) +
+  labs(x="CCBASIC")
 ```
 
 Based on the output, we can see that 9 (Associate's Colleges: High Vocational & Technical-High Nontraditional) and  14(Baccalaureate/Associate's Colleges: Associate's Dominant) are with almost equal numbers of Public and Private colleges. The rest of the categories are strongly dominated by one type or another. It's interesting to see that the majority of the Associates' colleges are mostly Public with very few Private options. On the other hand the Special focus Two-Years and the Baccalaureate colleges are mostly Private ones.
 
 The next variable to explore is the Number of Branches. Again we will see the distribution colored based on the Public vs Private options.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=as.factor(NUMBRANCH))) +
   geom_bar(aes(fill= as.factor(Type)),
-            position='dodge')
+            position='dodge') +
+  scale_fill_discrete(name= "Type", labels= c("Private", "Public")) +
+  labs(x="NUMBRANCH")
 ```
 
 From the graph, it is visible that the Private colleges are the ones that offer more branches. The Public colleges rarely have more than 6 branches. The majority of the colleges are with only one branch.
 
-The next variable in our exploratory analysis is the HIGHDEG. It describes the highest degree awarded at the college. There are 5 levels of degree described through the variable (0 - non-degree-granting, 1 - Certificate degree, 2 - Associate degree, 4 - Graduate degree).
+The next variable in our exploratory analysis is the `HIGHDEG`. It describes the highest degree awarded at the college. There are 5 levels of degree described through the variable (0 - non-degree-granting, 1 - Certificate degree, 2 - Associate degree, 4 - Graduate degree).
 
-```{r, cache=TRUE}
+```{r, cache=TRUE,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=as.factor(HIGHDEG))) +
   geom_bar(aes(fill= as.factor(Type)),
-            position='dodge')
+            position='dodge') +
+  scale_fill_discrete(name= "Type", labels= c("Private", "Public")) +
+  labs(x="HIGHDEG")
 ```
 
 From the graph we can see that categories 0 (no degree), 1(Certificate) and 3(Bachelors) are very strongly represented by Private colleges. The Public colleges are stronger in giving Associate degrees and Graduate degrees.
@@ -390,11 +403,13 @@ From the graph we can see that categories 0 (no degree), 1(Certificate) and 3(Ba
 The last variable to explore is the Tuition(NPT4).
 
 
-```{r, cache=TRUE}
+```{r, cache=TRUE,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=as.factor(Type),
              y=NPT4)) + 
-  geom_boxplot(aes(fill=Type)) 
+  geom_boxplot(aes(fill=Type))+
+  scale_fill_discrete(name= "Type", labels= c("Private", "Public")) +
+  labs(x="Type")
 ```
 
 
@@ -402,35 +417,34 @@ Based on the box plots, we can see that the Private colleges(on the left) are mo
 
 Another variable relationship to focus on is whether there is a strong relationship between the tuition and the number of branches.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 ggplot(data=csb.ren.df) + 
   aes(x=NPT4,
       y=NUMBRANCH) + 
   geom_point(size=1,
              alpha=0.2)
-
 ```
 
 Based on the plot, we can see that there is no clear correlation. The majority of the points are at the bottom of the graph which is explained by the fact that most of the colleges has 1 branch only. We can see that some colleges with very high number of branches, which stands out on the top of the graph, are with medium tuition in the range of 20,000 - 25,000. And the most expensive colleges has 1 branch only. Therefore we can not find a clear correlation between tuition and number of branches.
 
 The next relationship, we are interested in is to see how the tuition relates to region. The question we are exploring is whether some regions are more expensive than other.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=as.factor(REGION), y=NPT4)) +
-  geom_boxplot(aes(fill=as.factor(Type)))
-
+  geom_boxplot(aes(fill=as.factor(Type))) +
+  scale_fill_discrete(name= "Type", labels= c("Private", "Public")) +
+  labs(x="Region")
 ```
 
 The graph represents the tuition by region and by Public vs Private colleges. We can see that the tuition for the Public colleges is in general lower for each of the 9th regions. We can also observe that most of the regions are with comparable tuition when we compare the Private colleges and the Public colleges separately. Region 1(New England) stands out as the most expensive region when it comes to both Public and Private. While region 9 (Outlying areas) stands out as the cheapest area for education. Region 5(Southeast) has some very expensive colleges which stands out as outliers.
 
 The next comparison is between the Classification and the Tuition We are exploring whether the tuition varies by the type of college.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=CCBASIC, y=NPT4)) +
   geom_point(aes(color=Type))
-
 ```
 
 As we already discovered in previous graphs, certain type of colleges such as Associates are more strongly represented by Public colleges. As a result their tuition is lower than the tuition of other categories which are strongly represented by Private colleges such as Special focus Two Year colleges.
@@ -438,11 +452,11 @@ As we already discovered in previous graphs, certain type of colleges such as As
 It is also interesting to explore whether some regions tend to have colleges with more branches and how that is affected by Public vs Private classification.
 
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=as.factor(REGION), y=NUMBRANCH)) +
-  geom_point(aes(color=Type))
-
+  geom_point(aes(color=Type)) +
+  xlab("REGION")
 ```
 
 From the graph, we can see that the number of branches are approximately equally distributed between the regions. Region 1(New England) and Region 9 (Outlying areas) have colleges which are in general with slightly less number of branches. That could be explained by the geographical size of the regions. If the region is larger then it would make sense for the college to expand the number of branches in order to cover larger students' population.
@@ -450,7 +464,7 @@ From the graph, we can see that the number of branches are approximately equally
 
 
 As a next variable relationship in our analysis, we will focus on financial independence, first generation and family income. In order to visualize the relationship between the three numeric variables, family income, percentage of students who are financially independent and the percentage of first generation students, we use a tile graph. The x-axis represents the Financially independent students in percentage while the y-axis shows the percentage of first generation students. The color of the tile depicts the family income of students, white tiles for the low values and red for the high values of family income. The code used is :
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot +
   aes(x=Ind_Per, 
@@ -465,7 +479,7 @@ It can be observed from the graph that the there is a strong positive correlatio
 
 We now try to analyse the relationship between family income of students, degree provided by institutions and the type of the institution.Since it involved one numeric and two factor variables, we use a heat map.The x-axis represents the type, the y-axis denotes the degree and the color of the boxes stands for the average family income of students.The code used is:
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   group_by (Type, Degree) %>%
   summarize(avg.inc=mean(Family_Inc, na.rm = TRUE)) %>%
@@ -477,7 +491,7 @@ This output clearly depicts that institutes with students having the highest ave
 
 
 The code below is used to count the number of colleges in each state and arrange them from highest to lowest.
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   group_by(State) %>%
   summarise(Num_of_Public = sum(Type == 1),
@@ -488,7 +502,7 @@ csb.ren.df %>%
 
 From the output it can be seen that States 6,36 and 48 have the highest total number of colleges. These states are California, New York and Texas.For these top 3 states, we now would like to know which are the most popular degrees.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   filter(State %in% c(6,36,48)) %>%
   ggplot(aes(x=State)) + 
@@ -498,7 +512,7 @@ csb.ren.df %>%
 
 Certificate degrees seem to be the most popular in State 6 and 48 which are California and Texas. It is the second most popular degree after Bachelor's degree in New York. For these most popular certificate degrees, we wish to find the relationship between the type of institution, first generation students % and the family income of students.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   filter(State %in% c(6,48,36) & Degree ==1) %>%
   ggplot(aes(x=Family_Inc, y=First_Gen)) +
@@ -506,11 +520,11 @@ csb.ren.df %>%
   guides(size=FALSE)
 ```
 
-We observe a negative correlation between the family income of students and the percentage of first generation students. This tell us that for the most popular Certificate degrees in the most popular states California, New York and Texas, first generation students have lower family income. 
+We could observe a negative correlation exists between the family income of students and the percentage of first generation students. This tell us that for the most popular Certificate degrees in the most popular states California, New York and Texas, first generation students have lower family income. 
 
 
 Positive linear correlation exists between variable DEBT_N(The number of students in the median debt completers cohort) and variable (Number of students in the cumulative loan debt cohort). A smooth line is drawn through the data points. We could fine that the smooth line is straight line, thus the positive linear correlation between these two variables are pretty strong. 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=CUML_DEBT_N, y=DEBT_N)) + 
   geom_line(aes(color='red')) + 
@@ -518,7 +532,7 @@ csb.ren.df %>%
 ```
 
 Similarity, we could find the positive linear correlation also exists between DEBT_N and CDR3_DENOM:
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=DEBT_N, y=CDR3_DENOM)) + 
   geom_line(aes(color='red')) + 
@@ -526,7 +540,7 @@ csb.ren.df %>%
 ```
 
 In the same way, the positive linear correlation also exists between CUML_DEBT_N and CDR3_DENOM:
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=CUML_DEBT_N, y=CDR3_DENOM)) + 
   geom_line(aes(color='red')) + 
@@ -537,104 +551,139 @@ Based on the plots, we could notice that inside of the variable group CUML_DEBT_
 
 To evaluate the performance of public and private institution, We use box-plot:  
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=Type,
              y=CDR3)) + 
   geom_boxplot(aes(fill=Type)) +
-    ylim(0, 0.6)
+  ylim(0, 0.6)  +
+  scale_x_discrete(labels= c("Private", "Public")) +
+  scale_fill_discrete(labels= c("Private", "Public")) +
+  labs(x="Type")
 ```
 
 Because boxes overlap with both medians, no difference can be claimed. Namely we cannot tell if there is a difference in Three-year cohort default rate between public and private institutions.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=Type,
              y=PCTPELL)) + 
-  geom_boxplot(aes(fill=Type))
+  geom_boxplot(aes(fill=Type))  +
+  scale_x_discrete(labels= c("Private", "Public")) +
+  scale_fill_discrete(labels= c("Private", "Public")) +
+  labs(x="Type")
 ```
 
 Because boxes overlap but not both medians, it is likely that the Percentage of undergraduates who receive a Pell Grant in private colleges is greater than the one of public institutes.
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=Type,
              y=PCTFLOAN)) + 
-  geom_boxplot(aes(fill=Type))
+  geom_boxplot(aes(fill=Type)) +
+  scale_x_discrete(labels= c("Private", "Public")) +
+  scale_fill_discrete(labels= c("Private", "Public")) +
+  labs(x="Type")
 ```
 
 Because boxes overlap but not both medians, it is likely that the Percent of all federal undergraduate students receiving a federal student loan in private colleges is greater than the one of public institutes.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=Type,
              y=DEBT_N)) + 
   geom_boxplot(aes(fill=Type)) +
-  ylim(0, 30000)
+  ylim(0, 30000) +
+  scale_x_discrete(labels= c("Private", "Public")) +
+  scale_fill_discrete(labels= c("Private", "Public")) +
+  labs(x="Type")
 ```
 
 Because boxes overlap with both medians, no difference can be claimed. Namely we cannot tell if there is a difference in The number of students in the median debt completers cohort between public and private institutions.
 
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=Type,
              y=PCIP01)) + 
   geom_boxplot(aes(fill=Type)) +
-  ylim(0, 0.6)
+  ylim(0, 0.6) +
+  scale_x_discrete(labels= c("Private", "Public")) +
+  scale_fill_discrete(labels= c("Private", "Public")) +
+  labs(x="Type")
 ```
 The result indicates that the major percentage of taking agriculture degree is less than 0.1 percent in private school and less than 0.2 percent in public school. There are more outlier in private school. 
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=Type,
              y=PCIP03)) + 
   geom_boxplot(aes(fill=Type)) +
-  ylim(0, 0.7)
+  ylim(0, 0.7) +
+  scale_x_discrete(labels= c("Private", "Public")) +
+  scale_fill_discrete(labels= c("Private", "Public")) +
+  labs(x="Type")
 ```
+
 The result indicates that the majority percentage of taking natural resource degree is less than 0.15 percent in public school and less than 0.1 percent in private school.There are more outliers in private school than in public school.In some private school, the natural degree is awarded more than other private school and public school.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=Type,
              y=PCIP04)) + 
   geom_boxplot(aes(fill=Type)) +
-  ylim(0, 0.5)
+  ylim(0, 0.5) +
+  scale_x_discrete(labels= c("Private", "Public")) +
+  scale_fill_discrete(labels= c("Private", "Public")) +
+  labs(x="Type")
 ```
+
 The result indicates that the majority percentage of taking Architecture degree is less than 0.07 percent in private and public school. Private school has higher Architecture degree percentage than public school.There are more outliers in private school.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
 ggplot(aes(x=Type,
            y=PCIP05)) + 
   geom_boxplot(aes(fill=Type)) +
-  ylim(0, 0.5)
+  ylim(0, 0.5) +
+  scale_x_discrete(labels= c("Private", "Public")) +
+  scale_fill_discrete(labels= c("Private", "Public")) +
+  labs(x="Type")
 ```
+
 The result indicates that the majority percentage of Ethnic degree in private school is less than 0.1 percent while it is less than 0.05 in public school. There more higher percentage of Ethnic degree awarded in public school because public school has more outlines.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=Type,
              y=PCIP09)) + 
   geom_boxplot(aes(fill=Type)) +
-  ylim(0, 0.6)
+  ylim(0, 0.6) +
+  scale_x_discrete(labels= c("Private", "Public")) +
+  scale_fill_discrete(labels= c("Private", "Public")) +
+  labs(x="Type")
 ```
+
 The result indicates that majority of percentage of communication/journal degree awarded is less than 0.025 in public school.Private school has more high percentage communication egress awarded and has more outliers.
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   ggplot(aes(x=Type,
              y=PCIP10)) + 
   geom_boxplot(aes(fill=Type)) +
-  ylim(0, 0.5)
+  ylim(0, 0.5) +
+  scale_x_discrete(labels= c("Private", "Public")) +
+  scale_fill_discrete(labels= c("Private", "Public")) +
+  labs(x="Type")
 ```
+
 The result indicates that the range of percentage of communication technology degree awarded in private school is larger than public school. Private school has higher percentage of communication technology degree awarded.The percentage of communication technology degree awarded is more spread in private school than in public school. 
 
 ### Logistic regression
 
-The main objective of the project has been to compare the public and private colleges based on a number of criteria in order to determine what are the main differences betwen the two types of educational institutions. As a final step for the project, we will build a logistic regression which includes all our initially selected variables as independent variables and the Type variable (describing the college as either Public or Private) as a dependent variable. The logistic regression is built through the use of the glm function.
+The main objective of the project has been to compare the public and private colleges based on a number of criteria in order to determine what are the main differences between the two types of educational institutions. As a final step for the project, we will build a logistic regression which includes all our initially selected variables as independent variables and the Type variable (describing the college as either Public or Private) as a dependent variable. The logistic regression is built through the use of the `glm` function.
 
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df$Type <- as.factor(csb.ren.df$Type)
 levels(csb.ren.df$Type)
 csb.df <-na.omit(csb.ren.df)
@@ -645,12 +694,12 @@ summary(mylogit)
 
 ```
 
-Based on the regression, we can confirm the observations from the descriptive analysis in the previous sections of this report. From the regression report, we are interested in the varibles which has coefficients different than 0 with 95% confidence. These variables are: State, Female (Percentage of female students), Ind_Per (Percentage of financially independent students), First_Gen (Percentage of first generation students), HIGHDEG (Highest degree awarded 0-non degree awarded;4-graduate degree), NPT4 (Tuiton), NUMBRANCH (Number of branches), CCBASIC (Carnegie Classification which describes the colleges), CDR3_DENOM (Number of students in the cohort for the three-year cohort default rate), CDR3 (Three-year cohort default rate), PCTFLOAN (Percent of all federal undergraduate students receiving a federal student loan), DEBT_N (The number of students in the median debt completers cohort), PCIP10 (Percentage of degree awarded in Communication|Technology), PCIP03 (Percentage of degree in Natural Resources and COnversation). The list of the above variables represents the characterisitcs that differentiate Public and Private college. Based on the results, we can confirm see that the public and private colleges differ by their financial characteristics such as Tuiton and Percentage of financially independent students as well as the percent of federal loans for undergraduate students. The also differ by the type of education being offered (based on the carnegie classification and on the type of degrees). To explore further the difference we will also construct a correlation matrix. 
+Based on the regression, we can confirm the observations from the descriptive analysis in the previous sections of this report. From the regression report, we are interested in the variables which has coefficients different than 0 with 95% confidence. These variables are: State, Female (Percentage of female students), Ind_Per (Percentage of financially independent students), First_Gen (Percentage of first generation students), HIGHDEG (Highest degree awarded 0-non degree awarded;4-graduate degree), NPT4 (Tuition), NUMBRANCH (Number of branches), CCBASIC (Carnegie Classification which describes the colleges), CDR3_DENOM (Number of students in the cohort for the three-year cohort default rate), CDR3 (Three-year cohort default rate), PCTFLOAN (Percent of all federal undergraduate students receiving a federal student loan), DEBT_N (The number of students in the median debt completers cohort), PCIP10 (Percentage of degree awarded in Communication|Technology), PCIP03 (Percentage of degree in Natural Resources and Conversation). The list of the above variables represents the characteristics that differentiate Public and Private college. Based on the results, we can confirm see that the public and private colleges differ by their financial characteristics such as Tuition and Percentage of financially independent students as well as the percent of federal loans for undergraduate students. The also differ by the type of education being offered (based on the Carnegie classification and on the type of degrees). To explore further the difference we will also construct a correlation matrix. 
 
 
 #### Correlation Matrix
-The correlation matrix is done among all the independent numeric variables. The code prepares all the numeric independent variables using as.numeric function. The correlation matrix function in dplyr is applied to get the correlation among independent variables. 
-```{r}
+The correlation matrix is done among all the independent numeric variables. The code prepares all the numeric independent variables using as.numeric function. The correlation matrix function in `dplyr` is applied to get the correlation among independent variables. 
+```{r,message=FALSE, warning=FALSE}
 csb.ren.df %>%
   select(Type,Family_Inc, Female,Married,Ind_Per, First_Gen, CDR3, CDR3_DENOM,PCTPELL, PCTFLOAN, DEBT_N, CUML_DEBT_N, NPT4_PRIV, NPT4_PUB, PCIP01,PCIP03,PCIP04,PCIP05,PCIP09,PCIP10) %>%
   {.} -> csb.vars1.df
@@ -686,7 +735,8 @@ cor_matrix1<- cor_matrix%>%
   data.frame(row=rep(colnames(.)[-1],n_groups(.)))
 cor_matrix1
 ```
-Among private school, PCIP03 and PCIP05 has some correlation, around 0.53.Among public school, PCIP05 and PCIP09 has some correlation around 0.46. The correlation of those two variables don't vary too much. Moreover, for both private and public school, variable CDR3_DENOM is highly correlated with CUML_DEBT_N (with 0.97 correlation coefficient) and DEBT_N(with 0.97 correlation coefficient). Family Income and PCTFLOAN is highly correlated as well in both private school and public school. Understanding the correlation among independent variables can help with selecting proper models in later steps. 
+
+Among private school, `PCIP03` and `PCIP05` has some correlation, around 0.53.Among public school, `PCIP05` and `PCIP09` has some correlation around 0.46. The correlation of those two variables don't vary too much. Moreover, for both private and public school, variable `CDR3_DENOM` is highly correlated with `CUML_DEBT_N` (with 0.97 correlation coefficient) and `DEBT_N`(with 0.97 correlation coefficient). `Family Income` and `PCTFLOAN` is highly correlated as well in both private school and public school. Understanding the correlation among independent variables can help with selecting proper models in later steps. 
 
 ##Conclusion
 
