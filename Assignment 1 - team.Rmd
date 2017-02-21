@@ -71,7 +71,7 @@ There are 26 variables that we are interested in. The variables name,  type and 
 |PCTPELL          |NUMERIC    |Percentage of undergraduates who receive a Pell Grant|
 |PCTFLOAN         |NUMERIC    |Percent of all federal undergraduate students receiving a federal student loan|
 |DEBT_N           |NUMERIC    |The number of students in the median debt completers cohort|
-|CUML_DEBT_N      |NUMERIC     |Number of students in the cumulative loan debt cohort|
+|CUML_DEBT_N      |NUMERIC    |Number of students in the cumulative loan debt cohort|
 
 
 
