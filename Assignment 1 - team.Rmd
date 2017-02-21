@@ -79,12 +79,12 @@ There are 26 variables that we are interested in. The variables name,  type and 
 
 Our main goal of the project is to compare public and private schools. Based on this goal, we will define a number of objectives:
 
-* Investigating whether public or private colleges are more common in some regions 
+* Investigate whether public or private colleges are more common in some regions 
 * Compare Private and Public colleges on the level of the degrees they offer
 * Investigate whether public or private colleges tend to have higher number of campuses
 * Find out how the tuition differs between the two type of colleges
-* Using selected variables to explore whether public colleges and private ones are really different from repayment, aid and earnings perspective
-* To understand how the percentage of degree awarded between public school and private school, the `gglot` and `dplyr` function to calculate mean, median, and variance are conducted. This can help students understand how those degrees are awarded between public schools and private schools and give them basic insights on making decisions. 
+* Use selected variables to explore whether public colleges and private ones are really different from repayment, aid and earnings perspective
+* Understand how the percentage of degree awarded between public school and private school. The `gglot` and `dplyr` function to calculate mean, median, and variance are conducted. This can help students understand how those degrees are awarded between public schools and private schools and give them basic insights on making decisions. 
 
 
 
